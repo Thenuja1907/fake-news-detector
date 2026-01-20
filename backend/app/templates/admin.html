@@ -1,0 +1,48 @@
+<!-- Admin Dashboard Section (Screenshot 3 & 4) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+    <!-- Stat Card -->
+    <div class="bg-white p-6 rounded-xl border shadow-sm">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-slate-500 text-sm">Total Analyses</p>
+                <h3 class="text-3xl font-bold mt-1">1,284</h3>
+                <p class="text-green-500 text-sm mt-2">↑ 12% from last month</p>
+            </div>
+            <div class="text-blue-500 text-2xl"><i class="fa-solid fa-chart-line"></i></div>
+        </div>
+    </div>
+    <!-- ... Repeat for Active Users (94.2% etc) ... -->
+</div>
+
+<!-- Source Database Management (Screenshot 7) -->
+<div class="bg-white m-6 rounded-xl border shadow-sm p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">Source Database Management</h2>
+        <button class="bg-blue-600 text-white px-6 py-2 rounded-lg">Add New Source</button>
+    </div>
+    <table class="w-full text-left">
+        <thead class="bg-slate-50 text-slate-500 text-sm uppercase">
+            <tr>
+                <th class="p-4">Source Name</th>
+                <th class="p-4">URL</th>
+                <th class="p-4">Rating</th>
+                <th class="p-4">Reliability</th>
+                <th class="p-4">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y">
+            <tr>
+                <td class="p-4 font-semibold">BBC News</td>
+                <td class="p-4 text-slate-500">bbc.com</td>
+                <td class="p-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-bold">Verified Trusted</span></td>
+                <td class="p-4">
+                    <div class="w-32 bg-slate-100 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                    </div>
+                    <span class="text-xs">95%</span>
+                </td>
+                <td class="p-4 text-blue-600 font-medium">Edit | Remove</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

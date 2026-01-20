@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fake News Detector | AI Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 font-sans">
+    <header class="bg-white border-b p-4 flex justify-between items-center px-10 shadow-sm">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-shield-halved text-blue-600 text-3xl"></i>
+            <div>
+                <h1 class="text-xl font-bold text-slate-800">Fake News Detector</h1>
+                <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">AI-Powered Credibility Analysis</p>
+            </div>
+        </div>
+        <a href="/admin" class="bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition">
+            <i class="fa-solid fa-gear"></i> Admin
+        </a>
+    </header>
+
+    <main class="max-w-4xl mx-auto mt-8 px-4">
+        <div class="flex border-b border-slate-200 gap-8">
+            <button onclick="showTab('analyze')" id="tab-analyze" class="pb-3 border-b-2 border-blue-600 text-blue-600 font-bold transition">
+                <i class="fa-solid fa-magnifying-glass mr-2"></i>Analyze
+            </button>
+            <button onclick="showTab('history')" id="tab-history" class="pb-3 text-slate-400 font-bold hover:text-slate-600 transition">
+                <i class="fa-solid fa-clock-rotate-left mr-2"></i>History
+            </button>
+        </div>
+
+        <div id="view-analyze" class="mt-6 bg-white rounded-xl shadow-md border p-8 transition-all">
+            <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-file-circle-check text-blue-600"></i> Submit Content for Analysis
+            </h2>
+            <p class="text-sm font-semibold text-slate-600 mb-2">Enter Text Directly</p>
+            <textarea id="textContent" class="w-full border border-slate-200 rounded-lg p-4 h-44 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Paste news article, social media post, or headline here..."></textarea>
+            
+            <div class="relative my-10">
+                <hr class="border-slate-100">
+                <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 text-slate-400 font-bold text-xs uppercase tracking-widest">OR</span>
+            </div>
+
+            <p class="text-sm font-semibold text-slate-600 mb-2">Enter URL</p>
+            <input type="text" id="urlContent" class="w-full border border-slate-200 rounded-lg p-4 mb-8 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://example.com/article">
+            
+            <button onclick="runAnalysis()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95">
+                <i class="fa-solid fa-bolt"></i> Analyze Content
+            </button>
+        </div>
+
+        <div id="view-history" class="hidden mt-6 bg-white rounded-xl shadow-md border p-16 text-center">
+            <i class="fa-solid fa-box-open text-slate-200 text-5xl mb-4"></i>
+            <h3 class="text-slate-800 font-bold text-lg">Analysis History</h3>
+            <p class="text-slate-500 mt-2">No analysis history found. Results will appear here after your first scan.</p>
+        </div>
+    </main>
+
+    <script>
+        function showTab(tab) {
+            const isAnalyze = tab === 'analyze';
+            document.getElementById('view-analyze').classList.toggle('hidden', !isAnalyze);
+            document.getElementById('view-history').classList.toggle('hidden', isAnalyze);
+            
+            document.getElementById('tab-analyze').className = isAnalyze ? "pb-3 border-b-2 border-blue-600 text-blue-600 font-bold transition" : "pb-3 text-slate-400 font-bold hover:text-slate-600 transition";
+            document.getElementById('tab-history').className = !isAnalyze ? "pb-3 border-b-2 border-blue-600 text-blue-600 font-bold transition" : "pb-3 text-slate-400 font-bold hover:text-slate-600 transition";
+        }
+
+        async function runAnalysis() {
+            const btn = document.querySelector('button[onclick="runAnalysis()"]');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
+
+            const text = document.getElementById('textContent').value;
+            const url = document.getElementById('urlContent').value;
+
+            try {
+                const res = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ content: text, url: url })
+                });
+                const data = await res.json();
+                alert(`Analysis Complete!\nVerdict: ${data.verdict}\nConfidence: ${data.confidence}`);
+            } catch (err) {
+                alert("Error connecting to the AI server.");
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Analyze Content';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
