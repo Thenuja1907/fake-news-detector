@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, jsonify
-from .database import analysis_collection
+from database import analysis_collection
 import datetime
 import random
+
 
 main = Blueprint('main', __name__)
 

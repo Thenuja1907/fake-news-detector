@@ -1,32 +1,46 @@
-# backend/scripts/download_datasets.py
-
 import pandas as pd
-import requests
-from pathlib import Path
+import os
+import re
 
-def download_liar_dataset():
-    """Download LIAR dataset"""
-    urls = {
-        'train': 'https://raw.githubusercontent.com/tfs4/liar_dataset/master/train.tsv',
-        'test': 'https://raw.githubusercontent.com/tfs4/liar_dataset/master/test.tsv',
-        'valid': 'https://raw.githubusercontent.com/tfs4/liar_dataset/master/valid.tsv'
-    }
-    
-    data_dir = Path('../data/raw/liar')
-    data_dir.mkdir(parents=True, exist_ok=True)
-    
-    for name, url in urls.items():
-        print(f"Downloading {name} data...")
-        df = pd.read_csv(url, sep='\t', header=None)
-        df.to_csv(data_dir / f'{name}.csv', index=False)
-        print(f"✓ {name} data saved")
+def clean_text(text):
+    """NLP Preprocessing: Lowercase and remove noise"""
+    if not isinstance(text, str): 
+        return ""
+    text = text.lower()
+    text = re.sub(r'[^a-zA-Z\s]', '', text) # Remove numbers and special chars
+    return text.strip()
 
-def download_fakenewsnet():
-    """Download FakeNewsNet dataset"""
-    # Instructions to clone FakeNewsNet repository
-    print("Clone FakeNewsNet repository:")
-    print("git clone https://github.com/KaiDMML/FakeNewsNet.git ../data/raw/FakeNewsNet")
+def process_liar_dataset():
+    print("Checking for raw data...")
+    # This assumes your data is in fake-news-detector/data/raw/liar/
+    path = "../data/raw/liar/train.csv" 
+    
+    if os.path.exists(path):
+        df = pd.read_csv(path)
+        # Select Label (col 1) and Statement (col 2)
+        df = df.iloc[:, [1, 2]]
+        df.columns = ['label', 'text']
+        
+        # Map 6 labels to 0 (Fake) and 1 (Real)
+        fake_labels = ['false', 'pants-fire', 'barely-true']
+        df['label'] = df['label'].apply(lambda x: 0 if str(x).strip() in fake_labels else 1)
+        
+        print(f"✓ Successfully loaded {len(df)} records.")
+        return df
+    else:
+        print(f"Error: File not found at {os.path.abspath(path)}")
+        return pd.DataFrame()
 
 if __name__ == "__main__":
-    download_liar_dataset()
-    download_fakenewsnet()
+    df = process_liar_dataset()
+    if not df.empty:
+        print("Cleaning text data...")
+        df['text'] = df['text'].apply(clean_text)
+        
+        # Save to processed folder
+        output_dir = "../data/processed"
+        os.makedirs(output_dir, exist_ok=True)
+        output_path = os.path.join(output_dir, "cleaned_data.csv")
+        
+        df.to_csv(output_path, index=False)
+        print(f"✓ SUCCESS! Cleaned data saved to: {output_path}")
