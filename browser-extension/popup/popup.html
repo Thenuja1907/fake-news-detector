@@ -4,87 +4,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake News Detector</title>
-    <link rel="stylesheet" href="popup.css">
+    <title>Truth Guardian</title>
     <style>
         body {
             width: 320px;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 15px;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .tagline {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 20px;
         }
 
         .btn {
-            background: #2563eb;
+            background: #3b82f6;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 12px;
             width: 100%;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
         }
 
         .btn:hover {
-            background: #1d4ed8;
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result-card {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 16px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .label {
+            font-size: 10px;
+            color: #64748b;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .value {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .verdict-fake {
+            color: #f87171;
+        }
+
+        .verdict-real {
+            color: #34d399;
         }
 
         .hidden {
             display: none;
         }
 
-        .result-box {
-            margin-top: 15px;
+        .explanation {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5;
+            background: rgba(0, 0, 0, 0.2);
             padding: 10px;
-            background: #f8fafc;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .label {
-            font-size: 12px;
-            color: #64748b;
-            font-weight: bold;
-            text-transform: uppercase;
             margin-top: 8px;
-        }
-
-        .value {
-            font-size: 14px;
-            color: #1e293b;
-            font-weight: 600;
-        }
-
-        #explanation {
-            font-size: 12px;
-            color: #475569;
-            margin-top: 5px;
-            font-style: italic;
         }
     </style>
 </head>
 
 <body>
-    <h2 style="margin-top: 0; color: #1e293b;">Detector AI</h2>
-    <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Analyze the current page for credibility.</p>
+    <div class="container">
+        <div class="header">
+            <div class="logo-circle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+                </svg>
+            </div>
+            <h2>Truth Guardian</h2>
+        </div>
 
-    <button id="analyze-btn" class="btn">Analyze Page</button>
+        <div class="tagline">AI-powered misinformation detection system active.</div>
 
-    <p id="status" style="text-align: center; font-size: 12px; margin-top: 10px; color: #94a3b8;"></p>
+        <button id="analyze-btn" class="btn">Analyze Current Page</button>
+        <p id="status" style="text-align: center; font-size: 11px; margin-top: 10px; color: #64748b;"></p>
 
-    <div id="result" class="result-box hidden">
-        <div class="label">Verdict</div>
-        <div id="classification" class="value" style="font-size: 18px;">--</div>
+        <div id="result" class="result-card hidden">
+            <div class="label">Analysis Verdict</div>
+            <div id="classification" class="value" style="font-size: 18px;">--</div>
 
-        <div class="label">Credibility Score</div>
-        <div id="score" class="value">--</div>
+            <div style="display: flex; gap: 20px;">
+                <div>
+                    <div class="label">Credibility</div>
+                    <div id="score" class="value">--</div>
+                </div>
+                <div>
+                    <div class="label">Sentiment</div>
+                    <div id="sentiment" class="value">--</div>
+                </div>
+            </div>
 
-        <div class="label">Sentiment</div>
-        <div id="sentiment" class="value">--</div>
-
-        <div class="label">Explanation</div>
-        <div id="explanation">--</div>
+            <div class="label">AI Explanation</div>
+            <div id="explanation" class="explanation">--</div>
+        </div>
     </div>
-
     <script src="popup.js"></script>
 </body>
 
