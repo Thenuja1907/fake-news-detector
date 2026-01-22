@@ -122,12 +122,17 @@ def login():
         
         user_data = user_collection.find_one({'email': email})
         
-        if user_data and check_password_hash(user_data['password'], password):
+        if not user_data:
+            flash('This account does not exist. Please register first.', 'error')
+            return redirect(url_for('main.register'))
+
+        if check_password_hash(user_data['password'], password):
             user = User(user_data)
             login_user(user)
+            flash(f'Welcome back, {user.username}!', 'success')
             return redirect(url_for('main.dashboard'))
         else:
-            flash('Invalid email or password', 'error')
+            flash('Incorrect password. Please try again.', 'error')
             
     return render_template('login.html')
 
@@ -135,21 +140,27 @@ def login():
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
-        email = request.form.get('email')
+        email = request.form.get('email').lower() # Normalize email
         password = request.form.get('password')
         
+        # Validation
+        if not username or not email or not password:
+            flash('All fields are required', 'error')
+            return redirect(url_for('main.register'))
+
         if user_collection.find_one({'email': email}):
-            flash('Email already exists', 'error')
-        else:
-            hashed_password = generate_password_hash(password)
-            user_collection.insert_one({
-                'username': username,
-                'email': email,
-                'password': hashed_password,
-                'created_at': datetime.datetime.now()
-            })
-            flash('Account created! Please log in.', 'success')
+            flash('An account with this email already exists. Try logging in.', 'error')
             return redirect(url_for('main.login'))
+        
+        hashed_password = generate_password_hash(password)
+        user_collection.insert_one({
+            'username': username,
+            'email': email,
+            'password': hashed_password,
+            'created_at': datetime.datetime.now()
+        })
+        flash('Security clearance granted! You can now authorize your access.', 'success')
+        return redirect(url_for('main.login'))
             
     return render_template('register.html')
 
@@ -157,43 +168,37 @@ def register():
 @login_required
 def logout():
     logout_user()
+    flash('Authorized exit completed.', 'success')
     return redirect(url_for('main.login'))
 
 @main.route('/dashboard')
 @login_required
 def dashboard():
-    # 1. Fetch recent history for CURRENT USER only (mocking linkage for now if no history)
-    # real app would query: analysis_collection.find({"user_id": current_user.id})
+    # 1. Fetch recent history for CURRENT USER only
     try:
-        history = list(analysis_collection.find().sort("timestamp", -1).limit(10))
+        # Link history to email/id for multi-user support
+        history = list(analysis_collection.find({"user_email": current_user.email}).sort("timestamp", -1).limit(10))
     except Exception as e:
         print(f"⚠ DB History Error: {e}")
         history = []
     
-    # 2. Calculate Stats for User
+    # 2. Calculate Stats for User 
     try:
-        total_analyzed = analysis_collection.count_documents({})
-        fake_count = analysis_collection.count_documents({"classification": "Fake News"})
+        total_analyzed = analysis_collection.count_documents({"user_email": current_user.email})
+        fake_count = analysis_collection.count_documents({"user_email": current_user.email, "classification": "Fake News"})
+        
         avg_score_cursor = analysis_collection.aggregate([
+            {"$match": {"user_email": current_user.email}},
             {"$group": {"_id": None, "avg_score": {"$avg": "$credibility_score"}}}
         ])
         avg_score = list(avg_score_cursor)
         avg_credibility = round(avg_score[0]['avg_score'], 1) if avg_score else 0
     except Exception as e:
-        print(f"⚠ DB Stats Error: {e} - Using Mock Data")
-        # Mock Data for meaningful presentation
-        total_analyzed = 142
-        fake_count = 18
-        avg_credibility = 89.5
+        print(f"⚠ DB Stats Error: {e}")
+        total_analyzed = 0
+        fake_count = 0
+        avg_credibility = 0
         
-        # Add Mock history if empty
-        if not history:
-            history = [
-                {"content_snippet": "Breaking: Scientists discover new clean energy source...", "classification": "Real News", "credibility_score": 98.5, "sentiment": "Positive", "timestamp": datetime.datetime.now()},
-                {"content_snippet": "Shocking: Aliens land in Times Square!", "classification": "Fake News", "credibility_score": 12.0, "sentiment": "Negative", "timestamp": datetime.datetime.now()},
-                {"content_snippet": "Market update: Tech stocks rally after earnings...", "classification": "Real News", "credibility_score": 94.2, "sentiment": "Neutral", "timestamp": datetime.datetime.now()}
-            ]
-
     stats = {
         "total": total_analyzed,
         "fake_count": fake_count,
@@ -203,7 +208,13 @@ def dashboard():
     return render_template('dashboard.html', history=history, stats=stats, user=current_user)
 
 @main.route('/admin')
+@login_required
 def admin():
+    # Only allow a specific admin user or add an is_admin flag
+    # For this demo, we check if it's the specific gmail provided in history
+    if current_user.email != 'manivannanthenuja@gmail.com':
+        flash('Unauthorized Access. You do not have administration privileges.', 'error')
+        return redirect(url_for('main.dashboard'))
     try:
         # 1. Fetch Sources
         sources_list = list(source_collection.find())
@@ -330,7 +341,9 @@ def analyze():
 
     # 5. Save to Database
     try:
+        user_email = current_user.email if current_user.is_authenticated else "anonymous"
         analysis_record = {
+            "user_email": user_email,
             "content_snippet": content[:200],
             "url": url,
             "classification": result['classification'],

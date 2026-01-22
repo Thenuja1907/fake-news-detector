@@ -4,52 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account | Fake News Detector</title>
+    <title>Register | Truth Guardian</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            background: url('/static/images/tech_bg.png') no-repeat center center fixed;
+            background: #0f172a url('/static/images/tech_bg.png') no-repeat center center fixed;
             background-size: cover;
+            color: #f8fafc;
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        .input-glass {
+        .input-field {
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
         }
 
-        .input-glass::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+        .input-field:focus {
+            border-color: #10b981;
+            background: rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
 
-<body class="font-sans h-screen flex items-center justify-center p-4">
+<body class="font-sans min-h-screen flex items-center justify-center p-4">
 
-    <div class="glass-card p-8 rounded-3xl w-full max-w-md transition-all duration-500 hover:scale-[1.01]">
-        <div class="text-center mb-10">
+    <div class="glass-card p-6 md:p-8 rounded-2xl w-full max-w-[360px]">
+        <div class="text-center mb-6">
             <div
-                class="w-20 h-20 bg-green-600/20 text-green-400 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl border border-green-500/30">
+                class="w-14 h-14 bg-green-600/20 text-green-400 rounded-xl flex items-center justify-center mx-auto mb-3 text-2xl border border-green-500/30">
                 <i class="fa-solid fa-user-plus"></i>
             </div>
-            <h1 class="text-3xl font-bold text-white mb-2">Create Account</h1>
-            <p class="text-blue-100/60">Join the collective fighting misinformation</p>
+            <h1 class="text-xl font-bold text-white">Join Collective</h1>
+            <p class="text-green-100/40 text-[10px] uppercase tracking-widest mt-1">Create Secure Identity</p>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
         <div
-            class="mb-6 p-4 rounded-xl text-sm font-medium flex items-center gap-3 {{ 'bg-red-500/20 text-red-200 border border-red-500/30' if category == 'error' else 'bg-green-500/20 text-green-200 border border-green-500/30' }}">
+            class="mb-4 p-2.5 rounded-lg text-[11px] font-bold flex items-center gap-2 {{ 'bg-red-500/20 text-red-300' if category == 'error' else 'bg-green-500/20 text-green-300' }}">
             <i class="fa-solid {{ 'fa-circle-exclamation' if category == 'error' else 'fa-circle-check' }}"></i>
             {{ message }}
         </div>
@@ -57,50 +59,52 @@
         {% endif %}
         {% endwith %}
 
-        <form action="/register" method="POST" class="space-y-6">
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-blue-100/80 ml-1">Full Name</label>
+        <form action="/register" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-[10px] font-black text-green-300/50 uppercase mb-1.5 ml-1">Full Name</label>
                 <div class="relative group">
                     <i
-                        class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-blue-200/40 group-focus-within:text-blue-400 transition-colors"></i>
+                        class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-green-200/20 group-focus-within:text-green-400 transition-colors"></i>
                     <input type="text" name="username"
-                        class="input-glass w-full pl-12 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                        class="input-field w-full pl-10 p-2.5 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-green-500/50"
                         placeholder="John Doe" required>
                 </div>
             </div>
 
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-blue-100/80 ml-1">Email Address</label>
+            <div>
+                <label class="block text-[10px] font-black text-green-300/50 uppercase mb-1.5 ml-1">Email
+                    Address</label>
                 <div class="relative group">
                     <i
-                        class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-blue-200/40 group-focus-within:text-blue-400 transition-colors"></i>
+                        class="fa-solid fa-at absolute left-3.5 top-1/2 -translate-y-1/2 text-green-200/20 group-focus-within:text-green-400 transition-colors"></i>
                     <input type="email" name="email"
-                        class="input-glass w-full pl-12 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
-                        placeholder="you@example.com" required>
+                        class="input-field w-full pl-10 p-2.5 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-green-500/50"
+                        placeholder="user@truth.guardian" required>
                 </div>
             </div>
 
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-blue-100/80 ml-1">Password</label>
+            <div>
+                <label class="block text-[10px] font-black text-green-300/50 uppercase mb-1.5 ml-1">Secure Key</label>
                 <div class="relative group">
                     <i
-                        class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-blue-200/40 group-focus-within:text-blue-400 transition-colors"></i>
+                        class="fa-solid fa-key absolute left-3.5 top-1/2 -translate-y-1/2 text-green-200/20 group-focus-within:text-green-400 transition-colors"></i>
                     <input type="password" name="password"
-                        class="input-glass w-full pl-12 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                        class="input-field w-full pl-10 p-2.5 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-green-500/50"
                         placeholder="••••••••" required>
                 </div>
             </div>
 
             <button type="submit"
-                class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-green-900/40 active:scale-95">
-                Register Securely
+                class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition-all shadow-lg shadow-green-900/40 active:scale-[0.97]">
+                Initialize Account
             </button>
         </form>
 
-        <div class="mt-10 pt-8 border-t border-white/10 text-center">
-            <p class="text-blue-100/50 text-sm">
-                Already have an account?
-                <a href="/login" class="text-blue-400 font-bold hover:text-blue-300 transition-colors ml-1">Sign In
+        <div class="mt-8 pt-6 border-t border-white/5 text-center">
+            <p class="text-green-100/30 text-[10px] font-medium">
+                Already a Guardian?
+                <a href="/login"
+                    class="text-green-400 font-bold hover:text-green-300 ml-1 uppercase underline decoration-green-500/30 underline-offset-4">Authorize
                     Now</a>
             </p>
         </div>
