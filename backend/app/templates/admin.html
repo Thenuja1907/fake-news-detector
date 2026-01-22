@@ -1,48 +1,46 @@
-<!-- Admin Dashboard Section (Screenshot 3 & 4) -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
-    <!-- Stat Card -->
-    <div class="bg-white p-6 rounded-xl border shadow-sm">
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-slate-500 text-sm">Total Analyses</p>
-                <h3 class="text-3xl font-bold mt-1">1,284</h3>
-                <p class="text-green-500 text-sm mt-2">↑ 12% from last month</p>
-            </div>
-            <div class="text-blue-500 text-2xl"><i class="fa-solid fa-chart-line"></i></div>
-        </div>
-    </div>
-    <!-- ... Repeat for Active Users (94.2% etc) ... -->
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Source Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 font-sans">
 
-<!-- Source Database Management (Screenshot 7) -->
-<div class="bg-white m-6 rounded-xl border shadow-sm p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold">Source Database Management</h2>
-        <button class="bg-blue-600 text-white px-6 py-2 rounded-lg">Add New Source</button>
-    </div>
-    <table class="w-full text-left">
-        <thead class="bg-slate-50 text-slate-500 text-sm uppercase">
-            <tr>
-                <th class="p-4">Source Name</th>
-                <th class="p-4">URL</th>
-                <th class="p-4">Rating</th>
-                <th class="p-4">Reliability</th>
-                <th class="p-4">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y">
-            <tr>
-                <td class="p-4 font-semibold">BBC News</td>
-                <td class="p-4 text-slate-500">bbc.com</td>
-                <td class="p-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-bold">Verified Trusted</span></td>
-                <td class="p-4">
-                    <div class="w-32 bg-slate-100 rounded-full h-2">
-                        <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
-                    </div>
-                    <span class="text-xs">95%</span>
-                </td>
-                <td class="p-4 text-blue-600 font-medium">Edit | Remove</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+    <!-- Dark Header (Matches Image 3) -->
+    <header class="bg-[#1e293b] p-4 flex justify-between items-center px-10 shadow-lg text-white">
+        <div class="flex items-center gap-4">
+            <i class="fa-solid fa-gear text-blue-400 text-3xl"></i>
+            <div>
+                <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-widest">System Management & Monitoring</p>
+            </div>
+        </div>
+        <a href="/" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg font-bold flex items-center gap-2 transition">
+            <i class="fa-solid fa-house text-sm"></i> User Portal
+        </a>
+    </header>
+
+    <!-- Navigation Tabs (Matches Image 7) -->
+    <nav class="bg-white border-b border-slate-200 px-10 pt-4 shadow-sm">
+        <div class="flex gap-12">
+            <div class="pb-3 text-slate-400 font-bold flex items-center gap-2 cursor-pointer hover:text-slate-600">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+            </div>
+            <div class="pb-3 text-slate-400 font-bold flex items-center gap-2 cursor-pointer hover:text-slate-600">
+                <i class="fa-solid fa-users"></i> Users
+            </div>
+            <div class="pb-3 border-b-4 border-blue-600 text-blue-600 font-bold flex items-center gap-2">
+                <i class="fa-solid fa-database"></i> Sources
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="p-8 max-w-7xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+            
+            <!-- Table Header -->
+            <div

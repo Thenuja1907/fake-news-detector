@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector</title>
+    <link rel="stylesheet" href="popup.css">
+    <style>
+        body {
+            width: 320px;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 15px;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .result-box {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .value {
+            font-size: 14px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        #explanation {
+            font-size: 12px;
+            color: #475569;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 style="margin-top: 0; color: #1e293b;">Detector AI</h2>
+    <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Analyze the current page for credibility.</p>
+
+    <button id="analyze-btn" class="btn">Analyze Page</button>
+
+    <p id="status" style="text-align: center; font-size: 12px; margin-top: 10px; color: #94a3b8;"></p>
+
+    <div id="result" class="result-box hidden">
+        <div class="label">Verdict</div>
+        <div id="classification" class="value" style="font-size: 18px;">--</div>
+
+        <div class="label">Credibility Score</div>
+        <div id="score" class="value">--</div>
+
+        <div class="label">Sentiment</div>
+        <div id="sentiment" class="value">--</div>
+
+        <div class="label">Explanation</div>
+        <div id="explanation">--</div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

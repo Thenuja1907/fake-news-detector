@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | Fake News Detector</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .sidebar-item-active {
+            background-color: rgb(239 246 255);
+            color: rgb(37 99 235);
+            border-right: 3px solid rgb(37 99 235);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 font-sans text-slate-800">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col z-10 shadow-lg">
+            <div class="p-6 flex items-center gap-3 border-b border-slate-100">
+                <i class="fa-solid fa-shield-halved text-blue-600 text-2xl"></i>
+                <span
+                    class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Detector
+                    AI</span>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+                <a href="#"
+                    class="sidebar-item-active flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all hover:bg-slate-50">
+                    <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+                </a>
+                <a href="/"
+                    class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-700 transition-all">
+                    <i class="fa-solid fa-magnifying-glass w-5"></i> New Analysis
+                </a>
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-700 transition-all">
+                    <i class="fa-solid fa-clock-rotate-left w-5"></i> History
+                </a>
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-700 transition-all">
+                    <i class="fa-solid fa-bookmark w-5"></i> Saved Reports
+                </a>
+                <div class="pt-6">
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Settings</p>
+                    <a href="#"
+                        class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-700 transition-all">
+                        <i class="fa-solid fa-user w-5"></i> Profile
+                    </a>
+                    <a href="#"
+                        class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-700 transition-all">
+                        <i class="fa-solid fa-bell w-5"></i> Notifications
+                    </a>
+                </div>
+            </nav>
+
+            <div class="p-4 border-t border-slate-100">
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div
+                        class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                        JD
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-800 truncate">John Doe</p>
+                        <p class="text-xs text-slate-500 truncate">Free Plan</p>
+                    </div>
+                    <button class="text-slate-400 hover:text-slate-600"><i
+                            class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-50 to-slate-50 -z-10"></div>
+
+            <!-- Top Header -->
+            <header
+                class="h-16 glass sticky top-0 md:relative z-20 flex items-center justify-between px-6 border-b border-white/50 shadow-sm">
+                <div class="flex items-center gap-4 md:hidden">
+                    <button class="text-slate-500 hover:text-slate-700"><i
+                            class="fa-solid fa-bars text-xl"></i></button>
+                    <span class="font-bold text-lg text-slate-800">Dashboard</span>
+                </div>
+                <div class="hidden md:block">
+                    <h2 class="text-xl font-bold text-slate-800">Hello, John! 👋</h2>
+                    <p class="text-xs text-slate-500">Here's your activity overview for today.</p>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="relative hidden sm:block">
+                        <input type="text" placeholder="Search reports..."
+                            class="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-full text-sm w-64 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm">
+                        <i
+                            class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    </div>
+                    <button class="relative p-2 text-slate-500 hover:bg-white rounded-full transition-all">
+                        <i class="fa-regular fa-bell text-lg"></i>
+                        <span
+                            class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-slate-50"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-8">
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Stat Card 1 -->
+                    <div
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                        <div
+                            class="absolute right-0 top-0 w-32 h-32 bg-blue-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-110">
+                        </div>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <span
+                                    class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">+12%</span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-slate-800 mb-1">128</h3>
+                            <p class="text-sm text-slate-500 font-medium">Articles Analyzed</p>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 2 -->
+                    <div
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                        <div
+                            class="absolute right-0 top-0 w-32 h-32 bg-red-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-110">
+                        </div>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <span class="bg-slate-100 text-slate-500 text-xs font-bold px-2 py-1 rounded-full">All
+                                    time</span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-slate-800 mb-1">24</h3>
+                            <p class="text-sm text-slate-500 font-medium">Deepfakes Detected</p>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 3 -->
+                    <div
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                        <div
+                            class="absolute right-0 top-0 w-32 h-32 bg-indigo-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-110">
+                        </div>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-shield-cat"></i>
+                                </div>
+                                <span
+                                    class="bg-indigo-50 text-indigo-600 text-xs font-bold px-2 py-1 rounded-full">High</span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-slate-800 mb-1">98%</h3>
+                            <p class="text-sm text-slate-500 font-medium">Trust Score</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Recent Activity -->
+                    <div class="lg:col-span-2">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-slate-800">Recent Analysis</h3>
+                            <a href="#" class="text-sm font-semibold text-blue-600 hover:text-blue-700">View All</a>
+                        </div>
+
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50 text-xs uppercase text-slate-500 font-semibold">
+                                    <tr>
+                                        <th class="p-4 pl-6">Content / Source</th>
+                                        <th class="p-4">Date</th>
+                                        <th class="p-4">Status</th>
+                                        <th class="p-4 text-right">Confidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    {% if history %}
+                                    {% for item in history %}
+                                    <tr class="hover:bg-slate-50/50 transition-colors">
+                                        <td class="p-4 pl-6">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                                                    <i class="fa-solid fa-link"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-slate-800 line-clamp-1">
+                                                        {{ item.content_snippet | default('No Content') }}
+                                                    </p>
+                                                    <p class="text-xs text-slate-500">
+                                                        {{ item.url if item.url else 'Raw Text' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-4 text-sm text-slate-500">
+                                            {{ item.timestamp.strftime('%Y-%m-%d %H:%M') if item.timestamp else 'Just
+                                            now' }}
+                                        </td>
+                                        <td class="p-4">
+                                            {% if item.classification == 'Fake News' %}
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600">
+                                                <i class="fa-solid fa-xmark"></i> Fake
+                                            </span>
+                                            {% elif item.classification == 'Real News' %}
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-600">
+                                                <i class="fa-solid fa-check"></i> Real
+                                            </span>
+                                            {% else %}
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-600">
+                                                <i class="fa-solid fa-triangle-exclamation"></i> Suspicious
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="p-4 text-right text-sm font-bold text-slate-700">
+                                            {{ item.credibility_score }}%
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="p-8 text-center text-slate-500">
+                                            No analysis history found. Start using the extension!
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Side Widgets -->
+                    <div class="space-y-6">
+                        <!-- Quick Scan -->
+                        <div
+                            class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                            <div class="absolute -right-4 -bottom-4 bg-white/10 w-32 h-32 rounded-full"></div>
+                            <h3 class="text-lg font-bold mb-2 relative z-10">Quick Scan</h3>
+                            <p class="text-blue-100 text-sm mb-4 relative z-10">Instant verification for links and text.
+                            </p>
+
+                            <a href="/"
+                                class="block w-full bg-white text-blue-600 font-bold text-center py-3 rounded-xl shadow-md hover:bg-blue-50 transition active:scale-95 relative z-10">
+                                <i class="fa-solid fa-bolt mr-2"></i> Start Analysis
+                            </a>
+                        </div>
+
+                        <!-- Top Verified Sources -->
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Verified Sources
+                            </h3>
+                            <ul class="space-y-4">
+                                <li class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <img src="https://ui-avatars.com/api/?name=B+B&background=random&size=32"
+                                            class="w-8 h-8 rounded-full" alt="BBC">
+                                        <span class="font-bold text-sm text-slate-700">BBC News</span>
+                                    </div>
+                                    <i class="fa-solid fa-certificate text-blue-500 text-xs"></i>
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <img src="https://ui-avatars.com/api/?name=R+T&background=random&size=32"
+                                            class="w-8 h-8 rounded-full" alt="Reuters">
+                                        <span class="font-bold text-sm text-slate-700">Reuters</span>
+                                    </div>
+                                    <i class="fa-solid fa-certificate text-blue-500 text-xs"></i>
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <img src="https://ui-avatars.com/api/?name=A+P&background=random&size=32"
+                                            class="w-8 h-8 rounded-full" alt="AP">
+                                        <span class="font-bold text-sm text-slate-700">AP News</span>
+                                    </div>
+                                    <i class="fa-solid fa-certificate text-blue-500 text-xs"></i>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+</body>
+
+</html>

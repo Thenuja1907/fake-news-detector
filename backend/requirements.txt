@@ -1,0 +1,10 @@
+flask
+flask-cors
+pymongo
+pandas
+scikit-learn
+transformers
+torch
+joblib
+numpy
+accelerate>=0.26.0
