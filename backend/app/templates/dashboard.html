@@ -67,12 +67,12 @@
             <div class="p-4 border-t border-slate-100">
                 <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
                     <div
-                        class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                        JD
+                        class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase">
+                        {{ user.username[0] }}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-slate-800 truncate">John Doe</p>
-                        <p class="text-xs text-slate-500 truncate">Free Plan</p>
+                        <p class="text-sm font-bold text-slate-800 truncate">{{ user.username }}</p>
+                        <a href="/logout" class="text-xs text-red-500 hover:text-red-700 font-bold">Sign Out</a>
                     </div>
                     <button class="text-slate-400 hover:text-slate-600"><i
                             class="fa-solid fa-right-from-bracket"></i></button>
@@ -133,7 +133,7 @@
                                 <span
                                     class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">+12%</span>
                             </div>
-                            <h3 class="text-3xl font-bold text-slate-800 mb-1">128</h3>
+                            <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ stats.total }}</h3>
                             <p class="text-sm text-slate-500 font-medium">Articles Analyzed</p>
                         </div>
                     </div>
@@ -153,8 +153,8 @@
                                 <span class="bg-slate-100 text-slate-500 text-xs font-bold px-2 py-1 rounded-full">All
                                     time</span>
                             </div>
-                            <h3 class="text-3xl font-bold text-slate-800 mb-1">24</h3>
-                            <p class="text-sm text-slate-500 font-medium">Deepfakes Detected</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ stats.fake_count }}</h3>
+                            <p class="text-sm text-slate-500 font-medium">Fakes Detected</p>
                         </div>
                     </div>
 
@@ -173,8 +173,8 @@
                                 <span
                                     class="bg-indigo-50 text-indigo-600 text-xs font-bold px-2 py-1 rounded-full">High</span>
                             </div>
-                            <h3 class="text-3xl font-bold text-slate-800 mb-1">98%</h3>
-                            <p class="text-sm text-slate-500 font-medium">Trust Score</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ stats.avg_credibility }}%</h3>
+                            <p class="text-sm text-slate-500 font-medium">Avg. Trust Score</p>
                         </div>
                     </div>
                 </div>
