@@ -130,7 +130,12 @@ def login():
             user = User(user_data)
             login_user(user)
             flash(f'Welcome back, {user.username}!', 'success')
-            return redirect(url_for('main.dashboard'))
+            
+            # Role-Based Redirect
+            if user.email == 'manivannanthenuja@gmail.com':
+                return redirect(url_for('main.admin'))
+            else:
+                return redirect(url_for('main.dashboard'))
         else:
             flash('Incorrect password. Please try again.', 'error')
             return redirect(url_for('main.login'))

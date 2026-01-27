@@ -4,145 +4,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Source Management</title>
+    <title>Admin Portal | Fake News Detector</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .gradient-btn {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+    </style>
 </head>
 
-<body class="bg-slate-50 font-sans">
+<body class="bg-indigo-50/30 min-h-screen text-slate-800">
 
-    <!-- Header -->
-    <header class="bg-[#1e293b] p-4 flex justify-between items-center px-10 shadow-lg text-white">
-        <div class="flex items-center gap-4">
-            <i class="fa-solid fa-gear text-blue-400 text-3xl"></i>
-            <div>
-                <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-                <p class="text-xs text-slate-400 font-medium uppercase tracking-widest">System Management</p>
+    <!-- Top Navigation -->
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h1
+                        class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-purple-700">
+                        Fake News Detector</h1>
+                    <p class="text-xs text-slate-400 font-medium tracking-wide">AI-Powered Verification</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <div
+                    class="flex items-center gap-3 bg-white border border-slate-200 rounded-full pl-1 pr-4 py-1 shadow-sm">
+                    <div
+                        class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold shadow-md shadow-purple-500/30">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <span class="text-sm font-bold text-slate-600">{{ user }}</span>
+                </div>
             </div>
         </div>
-        <a href="/dashboard"
-            class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg font-bold flex items-center gap-2 transition">
-            <i class="fa-solid fa-house text-sm"></i> User Portal
-        </a>
     </header>
 
-    <!-- Navigation -->
-    <nav class="bg-white border-b border-slate-200 px-10 pt-4 shadow-sm">
-        <div class="flex gap-12">
-            <div class="pb-3 text-slate-400 font-bold flex items-center gap-2 cursor-pointer hover:text-slate-600">
-                <i class="fa-solid fa-chart-line"></i> Overview
-            </div>
-            <div class="pb-3 border-b-4 border-blue-600 text-blue-600 font-bold flex items-center gap-2">
-                <i class="fa-solid fa-database"></i> Source Database
-            </div>
-        </div>
-    </nav>
+    <main class="max-w-7xl mx-auto px-6 py-8">
 
-    <!-- Main Content -->
-    <main class="p-8 max-w-7xl mx-auto">
+        <!-- Stats Cards (Top) matches User Dashboard style but aggregated -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <!-- Total Analyses -->
+            <div
+                class="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 hover:shadow-lg transition-all duration-300">
+                <div
+                    class="w-12 h-12 rounded-xl bg-blue-500 text-white flex items-center justify-center text-xl mb-4 shadow-md shadow-blue-500/20">
+                    <i class="fa-regular fa-file-lines"></i>
+                </div>
+                <p class="text-sm font-bold text-slate-500 mb-1">Total Analyses</p>
+                <h3 class="text-4xl font-bold text-slate-800">{{ stats.scans }}</h3>
+            </div>
 
-        <!-- Stats Row -->
-        <div class="grid grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <p class="text-xs font-bold text-slate-400 uppercase">Total Scans</p>
-                <p class="text-3xl font-bold text-slate-800">{{ stats.scans }}</p>
+            <!-- Trustworthy -->
+            <div
+                class="bg-green-50/50 rounded-2xl p-6 border border-green-100 hover:shadow-lg transition-all duration-300">
+                <div
+                    class="w-12 h-12 rounded-xl bg-green-500 text-white flex items-center justify-center text-xl mb-4 shadow-md shadow-green-500/20">
+                    <i class="fa-regular fa-circle-check"></i>
+                </div>
+                <p class="text-sm font-bold text-slate-500 mb-1">Trustworthy</p>
+                <h3 class="text-4xl font-bold text-slate-800">0</h3>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <p class="text-xs font-bold text-slate-400 uppercase">Tracked Sources</p>
-                <p class="text-3xl font-bold text-blue-600">{{ stats.sources }}</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <p class="text-xs font-bold text-slate-400 uppercase">Active Users</p>
-                <p class="text-3xl font-bold text-green-600">{{ stats.users }}</p>
-            </div>
-        </div>
 
-        <!-- Add Source Form -->
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden mb-8">
-            <div class="p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                <h3 class="font-bold text-lg text-slate-700">Add New Trusted/Untrusted Source</h3>
+            <!-- Suspicious -->
+            <div
+                class="bg-orange-50/50 rounded-2xl p-6 border border-orange-100 hover:shadow-lg transition-all duration-300">
+                <div
+                    class="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center text-xl mb-4 shadow-md shadow-orange-500/20">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <p class="text-sm font-bold text-slate-500 mb-1">Suspicious</p>
+                <h3 class="text-4xl font-bold text-slate-800">0</h3>
             </div>
-            <div class="p-6">
-                <form id="addSourceForm" class="flex gap-4">
-                    <input type="text" name="name" placeholder="Source Name (e.g. BBC)"
-                        class="flex-1 p-3 border rounded-lg" required>
-                    <input type="text" name="url" placeholder="Domain (e.g. bbc.com)"
-                        class="flex-1 p-3 border rounded-lg" required>
-                    <select name="rating" class="p-3 border rounded-lg" required>
-                        <option value="Verified Trusted">Verified Trusted</option>
-                        <option value="Mainstream">Mainstream</option>
-                        <option value="Questionable">Questionable</option>
-                        <option value="Unreliable">Unreliable</option>
-                    </select>
-                    <button type="submit"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700">Add
-                        Source</button>
-                </form>
+
+            <!-- Accuracy Rate -->
+            <div
+                class="bg-purple-50/50 rounded-2xl p-6 border border-purple-100 hover:shadow-lg transition-all duration-300">
+                <div
+                    class="w-12 h-12 rounded-xl bg-purple-500 text-white flex items-center justify-center text-xl mb-4 shadow-md shadow-purple-500/20">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <p class="text-sm font-bold text-slate-500 mb-1">Accuracy Rate</p>
+                <h3 class="text-4xl font-bold text-slate-800">87.5%</h3>
             </div>
         </div>
 
-        <!-- Source List -->
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-slate-50 text-slate-500 font-semibold text-xs uppercase">
-                    <tr>
-                        <th class="p-4">Source Name</th>
-                        <th class="p-4">Domain URL</th>
-                        <th class="p-4">Trust Rating</th>
-                        <th class="p-4 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    {% for source in sources %}
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-4 font-bold text-slate-700">{{ source.name }}</td>
-                        <td class="p-4 text-blue-500">{{ source.url }}</td>
-                        <td class="p-4">
-                            {% if source.rating == 'Verified Trusted' %}
-                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">{{
-                                source.rating }}</span>
-                            {% elif source.rating == 'Unreliable' %}
-                            <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">{{ source.rating
-                                }}</span>
-                            {% else %}
-                            <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">{{
-                                source.rating }}</span>
-                            {% endif %}
-                        </td>
-                        <td class="p-4 text-right">
-                            <button onclick="deleteSource('{{ source._id }}')" class="text-red-400 hover:text-red-600">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <!-- Navigation Bar -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-2 mb-8 flex items-center justify-between">
+            <div class="flex items-center gap-2 flex-1">
+                <a href="/dashboard"
+                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze
+                </a>
+                <button
+                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                    <i class="fa-solid fa-chart-column"></i> Dashboard
+                </button>
+                <button
+                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left"></i> History
+                </button>
+                <button
+                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                    <i class="fa-solid fa-code-compare"></i> Compare
+                </button>
+            </div>
+
+            <button
+                class="gradient-btn text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/30 flex items-center gap-2 ml-auto">
+                <i class="fa-solid fa-gear"></i> Admin
+            </button>
         </div>
+
+        <!-- Admin Specific Stats (Row 2) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Total Users -->
+            <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative">
+                <div class="flex justify-between items-start mb-4">
+                    <h4 class="font-bold text-slate-800">Total Users</h4>
+                    <i class="fa-solid fa-users text-slate-300"></i>
+                </div>
+                <h3 class="text-4xl font-bold text-slate-800 mb-1">{{ stats.users }}</h3>
+                <p class="text-xs text-slate-400">342 active today</p>
+            </div>
+
+            <!-- Total Analyses (All Time) -->
+            <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative">
+                <div class="flex justify-between items-start mb-4">
+                    <h4 class="font-bold text-slate-800">Total Analyses</h4>
+                    <i class="fa-solid fa-bolt text-slate-300"></i>
+                </div>
+                <h3 class="text-4xl font-bold text-slate-800 mb-1">{{ stats.scans }}</h3>
+                <p class="text-xs text-slate-400">All time</p>
+            </div>
+
+            <!-- System Accuracy -->
+            <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative">
+                <div class="flex justify-between items-start mb-4">
+                    <h4 class="font-bold text-slate-800">System Accuracy</h4>
+                    <i class="fa-solid fa-arrow-trend-up text-slate-300"></i>
+                </div>
+                <h3 class="text-4xl font-bold text-green-500 mb-1">87.5%</h3>
+                <p class="text-xs text-slate-400">Based on user feedback</p>
+            </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+            <!-- Table Tabs -->
+            <div class="flex border-b border-slate-100 bg-slate-50/50 px-6 pt-4 gap-6">
+                <button class="pb-4 border-b-2 border-slate-800 font-bold text-sm text-slate-800">Users</button>
+                <button
+                    class="pb-4 border-b-2 border-transparent font-bold text-sm text-slate-400 hover:text-slate-600">Activity</button>
+                <button
+                    class="pb-4 border-b-2 border-transparent font-bold text-sm text-slate-400 hover:text-slate-600">Performance</button>
+                <button
+                    class="pb-4 border-b-2 border-transparent font-bold text-sm text-slate-400 hover:text-slate-600 ml-auto">Feedback</button>
+            </div>
+
+            <div class="p-8">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">User Management</h3>
+
+                <!-- Search -->
+                <div class="flex gap-4 mb-8">
+                    <div
+                        class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-3">
+                        <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                        <input type="text" placeholder="Search users..."
+                            class="bg-transparent w-full outline-none text-sm font-medium">
+                    </div>
+                    <button class="bg-slate-900 text-white px-8 rounded-xl text-sm font-bold">Search</button>
+                </div>
+
+                <!-- User Lists -->
+                <div class="space-y-4">
+                    <!-- User 1 -->
+                    <div
+                        class="flex items-center justify-between p-4 border border-slate-100 rounded-2xl hover:bg-slate-50 transition">
+                        <div>
+                            <h4 class="font-bold text-slate-800">John Doe</h4>
+                            <p class="text-sm text-slate-400">john@example.com</p>
+                            <p class="text-xs text-slate-300 mt-1">45 analyses</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span
+                                class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">active</span>
+                            <button
+                                class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white transition"><i
+                                    class="fa-solid fa-shield"></i></button>
+                            <button
+                                class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-white transition"><i
+                                    class="fa-solid fa-ban"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- User 2 -->
+                    <div
+                        class="flex items-center justify-between p-4 border border-slate-100 rounded-2xl hover:bg-slate-50 transition">
+                        <div>
+                            <h4 class="font-bold text-slate-800">Jane Smith</h4>
+                            <p class="text-sm text-slate-400">jane@example.com</p>
+                            <p class="text-xs text-slate-300 mt-1">32 analyses</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span
+                                class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">active</span>
+                            <button
+                                class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white transition"><i
+                                    class="fa-solid fa-shield"></i></button>
+                            <button
+                                class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-white transition"><i
+                                    class="fa-solid fa-ban"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <script>
-        // Handle Add Source
-        document.getElementById('addSourceForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            await fetch('/admin/add_source', {
-                method: 'POST',
-                body: formData
-            });
-            window.location.reload();
-        });
+    <!-- Floating Help Button -->
+    <div
+        class="fixed bottom-8 right-8 w-12 h-12 bg-slate-800 text-white rounded-full flex items-center justify-center shadow-2xl cursor-pointer hover:scale-110 transition-transform">
+        <i class="fa-solid fa-question"></i>
+    </div>
 
-        // Handle Delete Source
-        async function deleteSource(id) {
-            if (confirm('Are you sure?')) {
-                await fetch(`/admin/delete_source/${id}`, {
-                    method: 'DELETE'
-                });
-                window.location.reload();
-            }
-        }
-    </script>
 </body>
 
 </html>
