@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Analysis | Fake News Detector</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .gradient-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-indigo-50/30 text-slate-800 min-h-screen">
+
+    <!-- Top Header -->
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/dashboard" class="text-slate-400 hover:text-blue-600 transition">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </a>
+                <div class="h-6 w-px bg-slate-200"></div>
+                <h1 class="font-bold text-slate-700">Detailed Analysis Report</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <span
+                    class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-wide">Analysis
+                    ID: #8293</span>
+                <button class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-download"></i></button>
+                <button class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-share-nodes"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- Main Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column: Content & Overview -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Content Analysis Card -->
+                <div class="glass-panel rounded-2xl p-6 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fa-regular fa-file-lines text-blue-500"></i> Content Analysis
+                    </h2>
+                    <div
+                        class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-sm leading-relaxed text-slate-600 mb-4">
+                        <p>
+                            "New study suggests that drinking 5 cups of coffee daily grants immortality. Scientists at
+                            the Generic Institute of Science declare this a breakthrough..."
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-orange-50 border border-orange-100">
+                            <h4 class="text-xs font-bold uppercase text-orange-400 mb-1">Clickbait Probability</h4>
+                            <p class="text-2xl font-bold text-orange-600">High</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-blue-50 border border-blue-100">
+                            <h4 class="text-xs font-bold uppercase text-blue-400 mb-1">Source Domain</h4>
+                            <p class="text-lg font-bold text-blue-600 truncate">daily-science-buzz.com</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Credibility Scoring -->
+                <div class="glass-panel rounded-2xl p-6 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-green-500"></i> Credibility Scoring
+                    </h2>
+
+                    <div class="flex items-center justify-between mb-8 px-4">
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-red-500">12%</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase mt-1">Fact Check Score</p>
+                        </div>
+                        <div class="h-12 w-px bg-slate-100"></div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-orange-500">Suspicious</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase mt-1">Overall Verdict</p>
+                        </div>
+                        <div class="h-12 w-px bg-slate-100"></div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-purple-500">Low</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase mt-1">Auth. Reliability</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                                <span>Linguistic Patterns</span>
+                                <span>25/100</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-red-400 h-2 rounded-full" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                                <span>Cross-Reference Verification</span>
+                                <span>10/100</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-red-500 h-2 rounded-full" style="width: 10%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                                <span>Community Reports</span>
+                                <span>45/100</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-orange-400 h-2 rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Sentiment & AI Insights -->
+            <div class="lg:col-span-1 space-y-6">
+
+                <!-- Sentiment & Emotion -->
+                <div class="glass-panel rounded-2xl p-6 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-heart-pulse text-purple-500"></i> Sentiment & Emotion
+                    </h2>
+
+                    <div class="relative h-48 w-full flex items-center justify-center">
+                        <canvas id="emotionChart"></canvas>
+                    </div>
+
+                    <div class="mt-4 grid grid-cols-2 gap-2 text-center text-xs">
+                        <div class="bg-purple-50 p-2 rounded-lg text-purple-700 font-bold">
+                            <span class="block text-lg">Excitement</span>
+                            Detected
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded-lg text-slate-600 font-bold">
+                            <span class="block text-lg text-slate-800">Positive</span>
+                            Overall Tone
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Assessment -->
+                <div class="bg-gradient-header rounded-2xl p-6 text-white shadow-lg">
+                    <h3 class="font-bold text-lg mb-2"><i class="fa-solid fa-robot mr-2"></i> AI Assessment</h3>
+                    <p class="text-blue-100 text-sm leading-relaxed mb-4">
+                        The content exhibits sensationalist language patterns typical of fabricated news. No credible
+                        scientific sources were found to support the claims of "immortality".
+                    </p>
+                    <button
+                        class="w-full bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg py-2 text-sm font-bold transition">
+                        View Sources
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Emotion Chart
+        const ctx = document.getElementById('emotionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Joy', 'Fear', 'Anger', 'Surprise'],
+                datasets: [{
+                    data: [65, 10, 5, 20],
+                    backgroundColor: [
+                        '#a855f7', // Purple-500
+                        '#ef4444', // Red-500
+                        '#f97316', // Orange-500
+                        '#3b82f6'  // Blue-500
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            font: { family: 'Inter', size: 10 }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    </script>
+</body>
+
+</html>

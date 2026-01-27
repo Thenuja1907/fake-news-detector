@@ -135,7 +135,7 @@ def login():
             if user.email == 'manivannanthenuja@gmail.com':
                 return redirect(url_for('main.admin'))
             else:
-                return redirect(url_for('main.dashboard'))
+                return redirect(url_for('main.analysis_detail'))
         else:
             flash('Incorrect password. Please try again.', 'error')
             return redirect(url_for('main.login'))
@@ -212,6 +212,12 @@ def dashboard():
     }
 
     return render_template('dashboard.html', history=history, stats=stats, user=current_user)
+
+@main.route('/analysis_detail')
+@login_required
+def analysis_detail():
+    # In a real app, pass specific analysis ID
+    return render_template('user.html')
 
 @main.route('/admin')
 @login_required
