@@ -123,8 +123,8 @@ def login():
         user_data = user_collection.find_one({'email': email})
         
         if not user_data:
-            flash('This account does not exist. Please register first.', 'error')
-            return redirect(url_for('main.register'))
+            flash('This account does not exist. Please check your credentials.', 'error')
+            return redirect(url_for('main.login'))
 
         if check_password_hash(user_data['password'], password):
             user = User(user_data)
@@ -133,6 +133,7 @@ def login():
             return redirect(url_for('main.dashboard'))
         else:
             flash('Incorrect password. Please try again.', 'error')
+            return redirect(url_for('main.login'))
             
     return render_template('login.html')
 

@@ -5,8 +5,8 @@ import certifi
 # Connection string to your MongoDB Atlas
 MONGO_URI = "mongodb+srv://manivannanthenuja_db_user:Thenuja123M@cluster0.jlu2yik.mongodb.net/?retryWrites=true&w=majority"
 
-# Bypass SSL verification for development environment issues
-client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
+# Use certifi for strict SSL verification (Simulates production environment)
+client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 db = client["fake_news_db"]
 
 # 1. Collection for storing analyzed news (History)
