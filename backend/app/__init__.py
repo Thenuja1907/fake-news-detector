@@ -36,16 +36,11 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        # We need to import User here to avoid circular imports, 
-        # or better, move User class to models.py. 
-        # For now, we will redefine the simple loader logic here or import from routes if possible.
-        # But importing from routes inside create_app is circular.
-        # Ideally, we should have a models.py
-        from ..routes import User
+        from routes import User
         return User.get_by_id(user_id)
 
     # Register the routes from routes.py
-    from ..routes import main
+    from routes import main
     app.register_blueprint(main)
 
     return app
