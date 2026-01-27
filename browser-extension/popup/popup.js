@@ -1,67 +1,89 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const analyzeBtn = document.getElementById("analyze-btn");
-  const statusText = document.getElementById("status");
-  const resultDiv = document.getElementById("result");
-  const classificationEl = document.getElementById("classification");
-  const scoreEl = document.getElementById("score");
-  const sentimentEl = document.getElementById("sentiment");
-  const explanationEl = document.getElementById("explanation");
+document.addEventListener('DOMContentLoaded', () => {
+  const analyzeBtn = document.getElementById('analyze-btn');
+  const statusEl = document.getElementById('status');
+  const resultCard = document.getElementById('result');
 
-  // Check if we are on a valid page
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    if (tabs.length === 0) return;
-    const activeTab = tabs[0];
+  // UI Elements
+  const classificationEl = document.getElementById('classification');
+  const scoreEl = document.getElementById('score');
+  const sentimentEl = document.getElementById('sentiment');
+  const explanationEl = document.getElementById('explanation');
 
-    analyzeBtn.addEventListener("click", async () => {
-      statusText.innerText = "Analyzing content...";
-      resultDiv.classList.add("hidden");
+  analyzeBtn.addEventListener('click', async () => {
+    // Reset UI
+    resultCard.classList.add('hidden');
+    statusEl.textContent = "Scanning page content...";
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "Analyzing...";
 
-      // 1. Scripting: Get text from the page
-      try {
-        const injectionResults = await chrome.scripting.executeScript({
-          target: { tabId: activeTab.id },
-          func: () => document.body.innerText // Simple full-text extraction
-        });
+    try {
+      // 1. Get Active Tab
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-        const pageContent = injectionResults[0].result;
-        const pageUrl = activeTab.url;
-
-        if (!pageContent || pageContent.length < 50) {
-          statusText.innerText = "Not enough content to analyze.";
-          return;
-        }
-
-        // 2. Call the Backend API
-        const response = await fetch("http://localhost:5000/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content: pageContent, url: pageUrl })
-        });
-
-        if (!response.ok) throw new Error("Server error");
-
-        const data = await response.json();
-
-        // 3. Update UI
-        statusText.innerText = "Analysis Complete";
-        resultDiv.classList.remove("hidden");
-
-        classificationEl.innerText = data.classification;
-        scoreEl.innerText = data.credibility_score + "%";
-        sentimentEl.innerText = data.sentiment;
-        explanationEl.innerText = data.explanation;
-
-        // Color coding
-        if (data.classification === "Fake News") {
-          classificationEl.style.color = "red";
-        } else {
-          classificationEl.style.color = "green";
-        }
-
-      } catch (err) {
-        console.error(err);
-        statusText.innerText = "Error: Could not connect to server.";
+      if (!tab) {
+        throw new Error("No active tab found");
       }
-    });
+
+      // 2. Extract Text from Page
+      const results = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => {
+          // Simple text extraction heuristics
+          return document.body.innerText.substring(0, 5000); // Limit to 5k chars for performance
+        }
+      });
+
+      const pageText = results[0].result;
+      const pageUrl = tab.url;
+
+      statusEl.textContent = "Processing with AI...";
+
+      // 3. Call Backend API
+      const response = await fetch('http://127.0.0.1:5000/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: pageText,
+          url: pageUrl
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Server error");
+      }
+
+      const data = await response.json();
+
+      // 4. Update UI
+      displayResults(data);
+
+    } catch (error) {
+      statusEl.textContent = "Error: " + error.message;
+      statusEl.style.color = "#ef4444";
+      console.error(error);
+    } finally {
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = "Analyze Current Page";
+    }
   });
+
+  function displayResults(data) {
+    statusEl.textContent = "Analysis Complete";
+    resultCard.classList.remove('hidden');
+
+    // Classification Color
+    classificationEl.textContent = data.classification;
+    classificationEl.className = "value"; // reset
+    if (data.classification === "Fake News") {
+      classificationEl.classList.add("verdict-fake");
+    } else if (data.classification === "Real News") {
+      classificationEl.classList.add("verdict-real");
+    }
+
+    scoreEl.textContent = data.credibility_score + "%";
+    sentimentEl.textContent = data.sentiment;
+    explanationEl.textContent = data.explanation;
+  }
 });
