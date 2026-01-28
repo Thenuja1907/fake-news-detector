@@ -55,6 +55,25 @@
             </div>
 
             <div class="flex items-center gap-6">
+                {% if is_admin %}
+                <div class="flex items-center gap-4">
+                    <div
+                        class="flex items-center gap-3 bg-white border border-slate-200 rounded-full pl-1 pr-4 py-1 shadow-sm">
+                        <div
+                            class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold shadow-md shadow-purple-500/30">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <span class="text-sm font-bold text-slate-600">{{ user.email }}</span>
+                    </div>
+                    <!-- Premium Toggle -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" checked class="sr-only peer">
+                        <div
+                            class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600">
+                        </div>
+                    </label>
+                </div>
+                {% else %}
                 <div
                     class="flex items-center gap-3 bg-white border border-slate-200 rounded-full pl-1 pr-4 py-1 shadow-sm">
                     <div
@@ -63,6 +82,7 @@
                     </div>
                     <span class="text-sm font-bold text-slate-600">{{ user.email }}</span>
                 </div>
+                {% endif %}
                 <a href="/logout" class="text-slate-400 hover:text-red-500 transition-colors" title="Logout">
                     <i class="fa-solid fa-power-off"></i>
                 </a>
@@ -93,7 +113,7 @@
                     <i class="fa-regular fa-circle-check"></i>
                 </div>
                 <p class="text-sm font-bold text-slate-500 mb-1">Trustworthy</p>
-                <h3 class="text-4xl font-bold text-slate-800">{{ stats.total - stats.fake_count }}</h3>
+                <h3 class="text-4xl font-bold text-slate-800">{{ stats.trustworthy }}</h3>
             </div>
 
             <!-- Suspicious -->
@@ -104,7 +124,7 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
                 <p class="text-sm font-bold text-slate-500 mb-1">Suspicious (Fake)</p>
-                <h3 class="text-4xl font-bold text-slate-800">{{ stats.fake_count }}</h3>
+                <h3 class="text-4xl font-bold text-slate-800">{{ stats.fake }}</h3>
             </div>
 
             <!-- Accuracy Rate -->
@@ -115,7 +135,7 @@
                     <i class="fa-solid fa-chart-line"></i>
                 </div>
                 <p class="text-sm font-bold text-slate-500 mb-1">Accuracy Rate</p>
-                <h3 class="text-4xl font-bold text-slate-800">{{ stats.avg_credibility }}%</h3>
+                <h3 class="text-4xl font-bold text-slate-800">{{ stats.accuracy }}%</h3>
             </div>
         </div>
 
@@ -139,6 +159,14 @@
                     <i class="fa-solid fa-code-compare"></i> Compare
                 </button>
             </div>
+            {% if is_admin %}
+            <div class="pr-2">
+                <a href="/admin"
+                    class="gradient-btn px-6 py-3 rounded-xl shadow-lg shadow-blue-500/20 text-white text-sm font-bold flex items-center gap-2 hover:scale-105 transition-all">
+                    <i class="fa-solid fa-gear"></i> Admin
+                </a>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Content Sections -->

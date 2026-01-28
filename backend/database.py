@@ -32,11 +32,17 @@ class MockCollection:
         for item in self.data:
             match = True
             for k, v in query.items():
-                item_val = str(item.get(k)) if k == '_id' else item.get(k)
-                comp_val = str(v) if k == '_id' else v
-                if item_val != comp_val:
-                    match = False
-                    break
+                item_val = item.get(k)
+                if isinstance(v, dict) and '$regex' in v:
+                    if not item_val or v['$regex'] not in str(item_val):
+                        match = False
+                        break
+                else:
+                    target_val = str(item_val) if k == '_id' else item_val
+                    comp_val = str(v) if k == '_id' else v
+                    if target_val != comp_val:
+                        match = False
+                        break
             if match: results.append(item)
         
         if not results: return None
@@ -48,8 +54,8 @@ class MockCollection:
 
     def insert_one(self, doc):
         if '_id' not in doc:
-            import uuid
-            doc['_id'] = str(uuid.uuid4())[:24]
+            import secrets
+            doc['_id'] = secrets.token_hex(12) # 24 characters total
         self.data.append(doc)
         return type('OBJ', (), {'inserted_id': doc['_id']})
     
@@ -121,7 +127,9 @@ except Exception as e:
         {"name": "The Guardian", "url": "theguardian.com", "rating": "Verified Trusted"},
         {"name": "HealthLine Verified", "url": "healthline.com", "rating": "Highly Reliable"},
         {"name": "Fake News Network", "url": "fake-news-website.com", "rating": "Unreliable"},
-        {"name": "Conspiracy Blog", "url": "conspiracy-blog.com", "rating": "Unreliable"}
+        {"name": "Conspiracy Blog", "url": "conspiracy-blog.com", "rating": "Unreliable"},
+        {"name": "Fake News Blog", "url": "fake-news-blog.com", "rating": "Unreliable"},
+        {"name": "Misinfo Today", "url": "misinfo-today.org", "rating": "Unreliable"}
     ])
     user_collection = MockCollection(mock_users)
 

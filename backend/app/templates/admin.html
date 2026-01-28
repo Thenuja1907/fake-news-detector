@@ -73,7 +73,7 @@
                     <i class="fa-regular fa-circle-check"></i>
                 </div>
                 <p class="text-sm font-bold text-slate-500 mb-1">Trustworthy</p>
-                <h3 class="text-4xl font-bold text-slate-800">0</h3>
+                <h3 class="text-4xl font-bold text-slate-800">{{ stats.trustworthy }}</h3>
             </div>
 
             <!-- Suspicious -->
@@ -84,7 +84,7 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
                 <p class="text-sm font-bold text-slate-500 mb-1">Suspicious</p>
-                <h3 class="text-4xl font-bold text-slate-800">0</h3>
+                <h3 class="text-4xl font-bold text-slate-800">{{ stats.fake }}</h3>
             </div>
 
             <!-- Accuracy Rate -->
@@ -95,7 +95,7 @@
                     <i class="fa-solid fa-chart-line"></i>
                 </div>
                 <p class="text-sm font-bold text-slate-500 mb-1">Accuracy Rate</p>
-                <h3 class="text-4xl font-bold text-slate-800">87.5%</h3>
+                <h3 class="text-4xl font-bold text-slate-800">{{ stats.accuracy }}%</h3>
             </div>
         </div>
 
@@ -154,7 +154,7 @@
                     <h4 class="font-bold text-slate-800">System Accuracy</h4>
                     <i class="fa-solid fa-arrow-trend-up text-slate-300"></i>
                 </div>
-                <h3 class="text-4xl font-bold text-green-500 mb-1">87.5%</h3>
+                <h3 class="text-4xl font-bold text-green-500 mb-1">{{ stats.accuracy }}%</h3>
                 <p class="text-xs text-slate-400">Based on user feedback</p>
             </div>
         </div>
