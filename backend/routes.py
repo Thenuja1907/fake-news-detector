@@ -259,48 +259,36 @@ def dashboard():
     # Check if admin
     is_admin = (current_user.email == 'manivannanthenuja@gmail.com')
     
-    # 1. Fetch recent history
     try:
         if is_admin:
-            # Admins see global history
-            history = list(analysis_collection.find().sort("timestamp", -1).limit(10))
+            # Admins see global history and global stats
+            all_records = list(analysis_collection.find().sort("timestamp", -1))
         else:
-            # Users see only their history
-            history = list(analysis_collection.find({"user_email": current_user.email}).sort("timestamp", -1).limit(10))
-    except Exception as e:
-        history = []
-    
-    # 2. Calculate Stats
-    try:
-        if is_admin:
-            # Global Stats for Admin
-            total_analyzed = analysis_collection.count_documents({})
-            fake_count = analysis_collection.count_documents({"classification": "Fake News"})
-            avg_score_cursor = analysis_collection.aggregate([
-                {"$group": {"_id": None, "avg_score": {"$avg": "$credibility_score"}}}
-            ])
-        else:
-            # Personal Stats for User
-            total_analyzed = analysis_collection.count_documents({"user_email": current_user.email})
-            fake_count = analysis_collection.count_documents({"user_email": current_user.email, "classification": "Fake News"})
-            avg_score_cursor = analysis_collection.aggregate([
-                {"$match": {"user_email": current_user.email}},
-                {"$group": {"_id": None, "avg_score": {"$avg": "$credibility_score"}}}
-            ])
+            # Users see only their history and personal stats
+            all_records = list(analysis_collection.find({"user_email": current_user.email}).sort("timestamp", -1))
             
+        history = all_records[:10] # Show latest 10 in history tab
+        
+        # Calculate Stats from all_records
+        total_analyzed = len(all_records)
+        fake_count = sum(1 for item in all_records if item.get('classification') == "Fake News")
         trust_count = total_analyzed - fake_count
-        avg_score = list(avg_score_cursor)
         
-        # Default accuracy for admin demo if no data
-        default_acc = 87.5 if is_admin else 0
-        accuracy = round(avg_score[0]['avg_score'], 1) if avg_score else default_acc
-        
-        # If DB is empty and it's admin, use mock display values
+        # Accuracy Calculation (Average Credibility Score)
+        if total_analyzed > 0:
+            total_score = sum(item.get('credibility_score', 0) for item in all_records)
+            accuracy = round(total_score / total_analyzed, 1)
+        else:
+            accuracy = 87.5 if is_admin else 0
+            
+        # Fallback for Admin Demo if no real data yet
         if total_analyzed == 0 and is_admin:
             total_analyzed = 1452
             trust_count = 1100
             fake_count = 352
     except Exception as e:
+        print(f"Stats Error: {e}")
+        history = []
         total_analyzed = 1452 if is_admin else 0
         trust_count = 1100 if is_admin else 0
         fake_count = 352 if is_admin else 0
