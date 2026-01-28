@@ -1,0 +1,26 @@
+[
+    {
+        "username": "manivannanthenuja",
+        "email": "manivannanthenuja@gmail.com",
+        "password": "scrypt:32768:8:1$Ujt8ehGIkoY6VcqO$fe29c2898ef118f3aad690bcb35223e7efd0918d7234d3fa03762adc6927ac5ae124b289f18003cdc16554afa3686391e26e35957be99a6dc121c21d29c83521",
+        "_id": "01b82db3f744d27c1fc2c960"
+    },
+    {
+        "username": "Demo User",
+        "email": "user@demo.com",
+        "password": "scrypt:32768:8:1$WpMEEJKe0ucSG6ZF$2d90a081f2a49af227d4d77313c8eef98171c689cc65fc89bc096ecf0820656187f83991732cf9a65d4784520949d478c3733011d5e1504842b16c25b37500ad",
+        "_id": "7fb83abf00db21d2e92a6a47"
+    },
+    {
+        "username": "John Doe",
+        "email": "john@example.com",
+        "password": "scrypt:32768:8:1$F1nMYzdCJGWh7fKs$befb62301204838e26bff66eb761b4b72fa95da1b7b3dd2ca34946f9a42b6764aea20c71d26f4543378a724fba0e5a4dc352aa8b9eaa6227704b0d3832469bb2",
+        "_id": "a333da0603ff7661615553ea"
+    },
+    {
+        "username": "Jane Smith",
+        "email": "jane@example.com",
+        "password": "scrypt:32768:8:1$RhNvzhExiPE11WJL$b890695d1c0fcf861202214f3d16e654605cc0c28fd6b2932e85bdab895a0ff31e6b37de9c09b23df60503ef3b44d0bb6ffe60ea58ad6fde7ed2c88f8069a717",
+        "_id": "6ae7fdb71bd3bba8b4a541d0"
+    }
+]
