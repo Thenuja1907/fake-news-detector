@@ -2,6 +2,7 @@ from pymongo import MongoClient
 
 import certifi
 import datetime
+from werkzeug.security import generate_password_hash
 
 # Connection string to your MongoDB Atlas
 MONGO_URI = "mongodb+srv://manivannanthenuja_db_user:Thenuja123M@cluster0.jlu2yik.mongodb.net/?retryWrites=true&w=majority"
@@ -18,7 +19,11 @@ db = client["fake_news_db"]
 # This ensures the app works even if MongoDB Atlas is inaccessible
 class MockCollection:
     def __init__(self, data=None):
+        import secrets
         self.data = data or []
+        for doc in self.data:
+            if '_id' not in doc:
+                doc['_id'] = secrets.token_hex(12)
     def find_one(self, query, sort=None):
         # Handle $or separately
         if '$or' in query:
@@ -70,6 +75,29 @@ class MockCollection:
         if not query: return len(self.data)
         return len([item for item in self.data if all(item.get(k) == v for k, v in query.items())])
 
+    def update_one(self, query, update):
+        # Very simple mock update logic
+        target = self.find_one(query)
+        if target and '$set' in update:
+            for k, v in update['$set'].items():
+                target[k] = v
+        return type('OBJ', (), {'modified_count': 1 if target else 0})
+
+    def aggregate(self, pipeline):
+        # Specific mock implementation for the stats average
+        # We only look for the $avg operation in the pipeline
+        match_query = {}
+        for stage in pipeline:
+            if '$match' in stage:
+                match_query = stage['$match']
+        
+        filtered = [item for item in self.data if all(item.get(k) == v for k, v in match_query.items())]
+        
+        total_score = sum(item.get('credibility_score', 0) for item in filtered)
+        avg_score = total_score / len(filtered) if filtered else 0
+        
+        return [{"avg_score": avg_score}]
+
 class MockCursor:
     def __init__(self, data):
         self.data = data
@@ -82,16 +110,24 @@ class MockCursor:
 # 24-char hex IDs for compatibility with ObjectId()
 mock_users = [
     {
-        "_id": "00000000000000000000000a",
-        "username": "Admin Guardian",
+        "username": "manivannanthenuja",
         "email": "manivannanthenuja@gmail.com",
-        "password": "pbkdf2:sha256:600000$mock$4878a1bc1b6911f44a4282361405e3532cc2942f6d53b9f4851221f450c2664b" # 'password'
+        "password": generate_password_hash("password")
     },
     {
-        "_id": "00000000000000000000000b",
-        "username": "Demo User",
-        "email": "user@truth.guardian",
-        "password": "pbkdf2:sha256:600000$mock$4878a1bc1b6911f44a4282361405e3532cc2942f6d53b9f4851221f450c2664b" # 'password'
+        "username": "John Doe",
+        "email": "john@example.com",
+        "password": generate_password_hash("password")
+    },
+    {
+        "username": "Jane Smith",
+        "email": "jane@example.com",
+        "password": generate_password_hash("password")
+    },
+    {
+        "username": "Alice Johnson",
+        "email": "alice@guardian.ai",
+        "password": generate_password_hash("password")
     }
 ]
 

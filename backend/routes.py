@@ -16,9 +16,9 @@ main = Blueprint('main', __name__)
 # --- User Class for Flask-Login ---
 class User:
     def __init__(self, user_data):
-        self.id = str(user_data['_id'])
-        self.username = user_data['username']
-        self.email = user_data['email']
+        self.id = str(user_data.get('_id', 'unknown'))
+        self.username = user_data.get('username', 'Anonymous')
+        self.email = user_data.get('email', 'unknown@demo.com')
 
     def is_authenticated(self): return True
     def is_active(self): return True
@@ -194,10 +194,18 @@ def login():
                 'created_at': datetime.datetime.now()
             }
             user_collection.insert_one(new_user)
-            user_data = user_collection.find_one({'email': new_user['email']})
+            user_data = new_user # Use the object directly to avoid another DB trip
 
-        # Validation logic update: 
-        # Any password works as long as the identity exists.
+        if not user_data:
+            flash('Login failed. Please verify your credentials or try again.', 'error')
+            return redirect(url_for('main.login'))
+
+        # Track "hit" for user management
+        user_collection.update_one(
+            {"email": user_data['email']},
+            {"$set": {"last_login": datetime.datetime.now(), "status": "Active"}}
+        )
+
         user = User(user_data)
         login_user(user)
         flash(f'Welcome back, {user.username}!', 'success')
@@ -333,6 +341,13 @@ def admin():
         sources_list = list(source_collection.find())
         total_scans = analysis_collection.count_documents({})
         total_users = user_collection.count_documents({})
+        
+        # Fetch actual users from DB
+        users_list = list(user_collection.find())
+        # Enhance user data with scan counts
+        for user_item in users_list:
+            user_item['scan_count'] = analysis_collection.count_documents({"user_email": user_item.get('email')})
+        
         fake_count = analysis_collection.count_documents({"classification": "Fake News"})
         trustworthy = total_scans - fake_count
         
@@ -345,6 +360,11 @@ def admin():
         sources_list = []
         total_scans = 1452
         total_users = 105
+        # Provide mock users for demonstration if DB fails
+        users_list = [
+            {"username": "John Doe", "email": "john@example.com", "scan_count": 45},
+            {"username": "Jane Smith", "email": "jane@example.com", "scan_count": 32}
+        ]
         trustworthy = 1100
         fake_count = 352
         system_accuracy = 87.5
@@ -357,7 +377,7 @@ def admin():
         "accuracy": system_accuracy
     }
     
-    return render_template('admin.html', sources=sources_list, stats=stats, user=current_user.email)
+    return render_template('admin.html', sources=sources_list, users=users_list, stats=stats, user=current_user.email)
 
 @main.route('/admin/add_source', methods=['POST'])
 def add_source():

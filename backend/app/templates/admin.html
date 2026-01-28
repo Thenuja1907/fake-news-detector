@@ -188,37 +188,27 @@
 
                 <!-- User Lists -->
                 <div class="space-y-4">
-                    <!-- User 1 -->
+                    {% for u in users %}
                     <div
                         class="flex items-center justify-between p-4 border border-slate-100 rounded-2xl hover:bg-slate-50 transition">
                         <div>
-                            <h4 class="font-bold text-slate-800">John Doe</h4>
-                            <p class="text-sm text-slate-400">john@example.com</p>
-                            <p class="text-xs text-slate-300 mt-1">45 analyses</p>
+                            <h4 class="font-bold text-slate-800">{{ u.username }}</h4>
+                            <p class="text-sm text-slate-400">{{ u.email }}</p>
+                            <p class="text-xs text-slate-300 mt-1">{{ u.scan_count }} analyses</p>
                         </div>
                         <div class="flex items-center gap-4">
+                            {% if u.status == 'Active' %}
                             <span
-                                class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">active</span>
-                            <button
-                                class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white transition"><i
-                                    class="fa-solid fa-shield"></i></button>
-                            <button
-                                class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-white transition"><i
-                                    class="fa-solid fa-ban"></i></button>
-                        </div>
-                    </div>
+                                class="bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Active</span>
+                            {% else %}
+                            <span
+                                class="bg-slate-300 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Idle</span>
+                            {% endif %}
 
-                    <!-- User 2 -->
-                    <div
-                        class="flex items-center justify-between p-4 border border-slate-100 rounded-2xl hover:bg-slate-50 transition">
-                        <div>
-                            <h4 class="font-bold text-slate-800">Jane Smith</h4>
-                            <p class="text-sm text-slate-400">jane@example.com</p>
-                            <p class="text-xs text-slate-300 mt-1">32 analyses</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span
-                                class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">active</span>
+                            {% if u.last_login %}
+                            <span class="text-[10px] text-slate-400 font-medium">Last: {{ u.last_login.strftime('%H:%M')
+                                }}</span>
+                            {% endif %}
                             <button
                                 class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white transition"><i
                                     class="fa-solid fa-shield"></i></button>
@@ -227,6 +217,7 @@
                                     class="fa-solid fa-ban"></i></button>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
