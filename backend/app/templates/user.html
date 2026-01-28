@@ -156,7 +156,8 @@
                             </div>
                             <div class="w-full bg-slate-100 rounded-full h-2">
                                 <div class="h-2 rounded-full {{ 'bg-red-400' if analysis.credibility_score < 50 else 'bg-emerald-400' }}"
-                                    style="width: {{ analysis.credibility_score|default(50) }}%"></div>
+                                    style="width: var(--score, 50%); --score: {{ analysis.credibility_score|default(50) }}%;">
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -166,7 +167,8 @@
                             </div>
                             <div class="w-full bg-slate-100 rounded-full h-2">
                                 <div class="bg-blue-400 h-2 rounded-full"
-                                    style="width: {{ 50 if 'Mock' in analysis.url else 85 }}%"></div>
+                                    style="width: var(--auth, 85%); --auth: {{ 50 if 'Mock' in analysis.url else 85 }}%;">
+                                </div>
                             </div>
                         </div>
                     </div>
