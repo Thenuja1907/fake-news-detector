@@ -182,13 +182,15 @@ def perform_forensic_check(text):
     citations = [
         'according to', 'stated in', 'documented', 'official reports', 
         'sourced by', 'research shows', 'study published in', 'study shows',
-        'experts say', 'scientists found', 'data indicates', 'confirmed by'
+        'experts say', 'scientists found', 'data indicates', 'confirmed by',
+        'world health organization', 'who confirmed', 'cdc reports', 'fda approved',
+        'peer-reviewed', 'clinical trials', 'medical journal', 'health ministry'
     ]
     has_citation = any(c in text_lower for c in citations)
     if not has_citation:
-        bias_score += 0.2
+        bias_score += 0.15  # Reduced penalty
     else:
-        bias_score -= 0.15 # Real news usually has these
+        bias_score -= 0.20  # Stronger reward for authoritative sources
         
     return max(min(bias_score, 1.0), 0.0)
 
@@ -208,7 +210,7 @@ def login():
         identity = request.form.get('identity')
         password = request.form.get('password')
         
-        # Check both email and username
+        # Strict Authentication: Only existing users allowed
         user_data = user_collection.find_one({
             '$or': [
                 {'email': identity},
@@ -216,43 +218,38 @@ def login():
             ]
         })
         
-        if user_data:
-            # Verify existing user's password
-            if not check_password_hash(user_data['password'], password):
-                flash('Security Breach: Unauthorized password signature detected.', 'error')
-                return redirect(url_for('main.login'))
-        else:
-            # Auto-provision a new account for the first-time demo user
-            new_user = {
-                'username': identity.split('@')[0],
-                'email': identity if '@' in identity else f"{identity}@demo.guardian",
-                'password': generate_password_hash(password), # Lock provided pass as standard
-                'created_at': datetime.datetime.now()
-            }
-            user_collection.insert_one(new_user)
-            user_data = new_user 
-
         if not user_data:
-            flash('Login failed. Intelligence reports indicate an invalid identity.', 'error')
+            flash('Access Denied: No account found with these credentials. Please register first.', 'error')
+            return redirect(url_for('main.login'))
+        
+        # Verify password
+        if not check_password_hash(user_data['password'], password):
+            flash('Authentication Failed: Invalid password.', 'error')
             return redirect(url_for('main.login'))
 
-        # Track "hit" for user management
+        # Update last login timestamp
         user_collection.update_one(
             {"email": user_data['email']},
             {"$set": {"last_login": datetime.datetime.now(), "status": "Active"}}
         )
 
+        # Create user session
         user = User(user_data)
         login_user(user)
         flash(f'Welcome back, {user.username}!', 'success')
         
         # Role-Based Redirect
+        has_analysis = analysis_collection.count_documents({"user_email": user.email}) > 0
+        
         if user.email == 'manivannanthenuja@gmail.com' or user.username == 'manivannanthenuja':
             return redirect(url_for('main.admin'))
-        else:
+        elif has_analysis:
             return redirect(url_for('main.analysis_detail'))
+        else:
+            return redirect(url_for('main.dashboard'))
             
     return render_template('login.html')
+
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -513,11 +510,11 @@ def analyze():
         result['classification'] = "Insufficient Data"
         result['credibility_score'] = 50.0
         result['explanation'] = "Analysis Inconclusive. The input text is too short for a reliable forensic scan."
-    elif 0.47 <= final_bias_index <= 0.53: # Standardized mixed signals range
+    elif 0.48 <= final_bias_index <= 0.52:  # Narrowed range for mixed signals
         result['classification'] = "Insufficient Data"
         result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
         result['explanation'] = "Mixed Signals Detected. The system found both credible and suspicious markers."
-    elif final_bias_index > 0.46: # Aggressive detection (Anything above 46% bias is suspicious)
+    elif final_bias_index > 0.47:  # Adjusted threshold
         result['classification'] = "Fake News"
         result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
     else:

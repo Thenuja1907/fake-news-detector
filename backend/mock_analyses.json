@@ -386,5 +386,47 @@
         "sentiment": "Neutral",
         "timestamp": "2026-01-28T23:16:20.297268",
         "_id": "50ac73d05dbd0756bca1d20b"
+    },
+    {
+        "user_email": "thenuja@gmail.com",
+        "content_snippet": "https://fake-news-blog.com",
+        "url": "https://fake-news-blog.com",
+        "classification": "Fake News",
+        "credibility_score": 26.5,
+        "source_rating": "Unreliable",
+        "source_score": 15,
+        "bias_score": 0.8500000000000001,
+        "neural_prob": 0.563239574432373,
+        "sentiment": "Neutral",
+        "timestamp": "2026-01-29T00:00:21.509383",
+        "_id": "4872e1cfba5ed490510d1812"
+    },
+    {
+        "user_email": "thenuja@gmail.com",
+        "content_snippet": "Scan Source: https://www.nasa.gov/new",
+        "url": "https://www.nasa.gov/new",
+        "classification": "Real News",
+        "credibility_score": 68.0,
+        "source_rating": "Verified Trusted",
+        "source_score": 95,
+        "bias_score": 0.5,
+        "neural_prob": 0.5,
+        "sentiment": "Neutral",
+        "timestamp": "2026-01-29T00:00:37.391263",
+        "_id": "4dab09379dd906c8cc949bc8"
+    },
+    {
+        "user_email": "thenuja@gmail.com",
+        "content_snippet": "The World Health Organization confirmed that a new vaccine for Virus X achieved 95% effectiveness in clinical trials and is approved for emergency us",
+        "url": "",
+        "classification": "Insufficient Data",
+        "credibility_score": 52.9,
+        "source_rating": "Manual Entry",
+        "source_score": 40,
+        "bias_score": 0.4,
+        "neural_prob": 0.56307053565979,
+        "sentiment": "Neutral",
+        "timestamp": "2026-01-29T00:01:42.657215",
+        "_id": "a82158ff196dfef73b6fc863"
     }
 ]

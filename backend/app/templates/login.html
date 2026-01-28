@@ -99,17 +99,24 @@
 
         <!-- Demo Buttons -->
         <div class="grid grid-cols-2 gap-4">
-            <button onclick="fillDemo('user')"
+            <button type="button" onclick="fillDemo('user')"
                 class="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all">
                 <i class="fa-regular fa-user"></i> User Demo
             </button>
-            <button onclick="fillDemo('admin')"
+            <button type="button" onclick="fillDemo('admin')"
                 class="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all">
                 <i class="fa-solid fa-shield-halved"></i> Admin Demo
             </button>
         </div>
 
-        <div class="mt-8 text-center">
+        <div class="mt-6 text-center">
+            <p class="text-sm text-slate-500">
+                Don't have an account?
+                <a href="/register" class="text-blue-600 font-bold hover:text-blue-700 transition">Register here</a>
+            </p>
+        </div>
+
+        <div class="mt-4 text-center">
             <p class="text-xs text-slate-400">
                 Demo Credentials:<br>
                 User: user@demo.com / anypass<br>
