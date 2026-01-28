@@ -116,7 +116,12 @@ except Exception as e:
     source_collection = MockCollection([
         {"name": "BBC News", "url": "bbc.com", "rating": "Verified Trusted"},
         {"name": "Reuters", "url": "reuters.com", "rating": "Verified Trusted"},
-        {"name": "Fake News Network", "url": "fake-news-website.com", "rating": "Unreliable"}
+        {"name": "Associated Press", "url": "apnews.com", "rating": "Verified Trusted"},
+        {"name": "The New York Times", "url": "nytimes.com", "rating": "Verified Trusted"},
+        {"name": "The Guardian", "url": "theguardian.com", "rating": "Verified Trusted"},
+        {"name": "HealthLine Verified", "url": "healthline.com", "rating": "Highly Reliable"},
+        {"name": "Fake News Network", "url": "fake-news-website.com", "rating": "Unreliable"},
+        {"name": "Conspiracy Blog", "url": "conspiracy-blog.com", "rating": "Unreliable"}
     ])
     user_collection = MockCollection(mock_users)
 
