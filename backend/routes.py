@@ -116,6 +116,35 @@ def extract_named_entities(text):
     filtered = list(set([e for e in entities if e not in stop_words]))
     return filtered[:5]  # Return top 5
 
+def perform_forensic_check(text):
+    """
+    Linguistic forensic analysis to detect common markers of fake news.
+    Returns: Bias Score (0 to 1, higher means more likely fake)
+    """
+    bias_score = 0.0
+    
+    # 1. Clickbait/Sensationalist Keywords
+    sensational_words = ['unbelievable', 'mind-blowing', 'exposed', 'shocking', 'miracle', 'secret', 'won\'t believe', 'immortality', 'magic', 'scam']
+    matches = [w for w in sensational_words if w in text.lower()]
+    bias_score += len(matches) * 0.20
+    
+    # 2. Punctuation Abuse (Exclamation marks)
+    if text.count('!') > 2:
+        bias_score += 0.2
+        
+    # 3. Capitalization Intensity (SHOUTING)
+    capitals = sum(1 for c in text if c.isupper())
+    if len(text) > 20 and (capitals / len(text)) > 0.2:
+        bias_score += 0.25
+        
+    # 4. Lack of Citation Phrases
+    citations = ['according to', 'stated in', 'documented', 'official reports', 'sourced by', 'verified']
+    has_citation = any(c in text.lower() for c in citations)
+    if not has_citation:
+        bias_score += 0.15
+        
+    return min(bias_score, 1.0)
+
 # --- Routes ---
 
 from bson.objectid import ObjectId
@@ -348,9 +377,13 @@ def analyze():
     source_rating, source_score = verify_source(url)
     result['source_rating'] = source_rating
 
-    # Stage 3: Neural Analysis (RoBERTa)
+    # Stage 3: Neural Analysis (RoBERTa + Forensic Heuristics)
     if model and tokenizer and content:
         try:
+            # Linguistic Forensic Check (Manual Heuristic)
+            bias_score = perform_forensic_check(content)
+            
+            # Neural Prediction
             inputs = tokenizer(content, return_tensors="pt", truncation=True, padding=True, max_length=512)
             with torch.no_grad():
                 outputs = model(**inputs)
@@ -358,16 +391,25 @@ def analyze():
                 
             fake_prob = probs[0][1].item()
             real_prob = probs[0][0].item()
-            is_fake = fake_prob > real_prob
-            confidence = (fake_prob if is_fake else real_prob) * 100
+            
+            # Adjust probabilities based on Forensic Check
+            # This ensures that even with a 'base' model, linguistic patterns are caught.
+            adjusted_fake_prob = (fake_prob * 0.4) + (bias_score * 0.6)
+            
+            is_fake = adjusted_fake_prob > 0.5 
+            confidence = (adjusted_fake_prob if is_fake else (1 - adjusted_fake_prob)) * 100
 
             result['classification'] = "Fake News" if is_fake else "Real News"
+            
+            # Credibility is high for Real, low for Fake
             base_score = (100 - confidence) if is_fake else confidence
             
-            # Hybrid Fusion (AI + Source)
-            final_score = (base_score * 0.7) + (source_score * 0.3)
+            # Hybrid Fusion (AI/Forensic + Source Reputation)
+            final_score = (base_score * 0.6) + (source_score * 0.4)
             result['credibility_score'] = round(final_score, 1)
-            result['explanation'] = f"Neural patterns indicate {result['classification']}. Source reputation verified as {source_rating}."
+            
+            explain_forensic = "Sensationalist patterns detected." if bias_score > 0.5 else "Formal language patterns verified."
+            result['explanation'] = f"Neural analysis refined by Forensic checks indicates {result['classification']}. {explain_forensic}"
 
         except Exception as e:
             result['classification'] = "Error"
