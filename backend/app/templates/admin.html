@@ -106,130 +106,216 @@
                     class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze
                 </a>
-                <button
-                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                <button onclick="switchAdminView('dashboard')" id="nav-dashboard"
+                    class="admin-nav-btn gradient-btn text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 transition flex items-center gap-2">
                     <i class="fa-solid fa-chart-column"></i> Dashboard
                 </button>
-                <button
-                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
-                    <i class="fa-solid fa-clock-rotate-left"></i> History
+                <button onclick="switchAdminView('users')" id="nav-users"
+                    class="admin-nav-btn bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                    <i class="fa-solid fa-users"></i> User Management
                 </button>
-                <button
-                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                <button onclick="switchAdminView('compare')" id="nav-compare"
+                    class="admin-nav-btn bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
                     <i class="fa-solid fa-code-compare"></i> Compare
                 </button>
             </div>
 
             <button
                 class="gradient-btn text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/30 flex items-center gap-2 ml-auto">
-                <i class="fa-solid fa-gear"></i> Admin
+                <i class="fa-solid fa-gear"></i> Admin Portal
             </button>
         </div>
 
-        <!-- Admin Specific Stats (Row 2) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Total Users -->
-            <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative">
-                <div class="flex justify-between items-start mb-4">
-                    <h4 class="font-bold text-slate-800">Total Users</h4>
-                    <i class="fa-solid fa-users text-slate-300"></i>
+        <!-- Section: Dashboard Stats -->
+        <div id="section-dashboard" class="admin-section">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Total Users -->
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="font-bold text-slate-800">Total Users</h4>
+                        <i class="fa-solid fa-users text-slate-300"></i>
+                    </div>
+                    <h3 class="text-4xl font-bold text-slate-800 mb-1">{{ stats.users }}</h3>
+                    <p class="text-xs text-slate-400 font-medium">Verified platform users</p>
                 </div>
-                <h3 class="text-4xl font-bold text-slate-800 mb-1">{{ stats.users }}</h3>
-                <p class="text-xs text-slate-400">342 active today</p>
+
+                <!-- Total Analyses (All Time) -->
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="font-bold text-slate-800">Total Analyses</h4>
+                        <i class="fa-solid fa-bolt text-slate-300"></i>
+                    </div>
+                    <h3 class="text-4xl font-bold text-slate-800 mb-1">{{ stats.scans }}</h3>
+                    <p class="text-xs text-slate-400 font-medium">Global scan volume</p>
+                </div>
+
+                <!-- System Accuracy -->
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="font-bold text-slate-800">System Accuracy</h4>
+                        <i class="fa-solid fa-arrow-trend-up text-slate-300"></i>
+                    </div>
+                    <h3 class="text-4xl font-bold text-green-500 mb-1">{{ stats.accuracy }}%</h3>
+                    <p class="text-xs text-slate-400 font-medium">AI classification confidence</p>
+                </div>
             </div>
 
-            <!-- Total Analyses (All Time) -->
-            <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative">
-                <div class="flex justify-between items-start mb-4">
-                    <h4 class="font-bold text-slate-800">Total Analyses</h4>
-                    <i class="fa-solid fa-bolt text-slate-300"></i>
+            <div class="bg-white rounded-3xl p-10 border border-slate-100 mb-8">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Global Network Traffic</h3>
+                <div
+                    class="h-64 bg-slate-50 rounded-2xl flex items-center justify-center border border-dashed border-slate-200">
+                    <p class="text-slate-400 text-sm italic font-medium">Real-time Traffic Visualization Module
+                        Loading...</p>
                 </div>
-                <h3 class="text-4xl font-bold text-slate-800 mb-1">{{ stats.scans }}</h3>
-                <p class="text-xs text-slate-400">All time</p>
-            </div>
-
-            <!-- System Accuracy -->
-            <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative">
-                <div class="flex justify-between items-start mb-4">
-                    <h4 class="font-bold text-slate-800">System Accuracy</h4>
-                    <i class="fa-solid fa-arrow-trend-up text-slate-300"></i>
-                </div>
-                <h3 class="text-4xl font-bold text-green-500 mb-1">{{ stats.accuracy }}%</h3>
-                <p class="text-xs text-slate-400">Based on user feedback</p>
             </div>
         </div>
 
-        <!-- User Management -->
-        <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-            <!-- Table Tabs -->
-            <div class="flex border-b border-slate-100 bg-slate-50/50 px-6 pt-4 gap-6">
-                <button class="pb-4 border-b-2 border-slate-800 font-bold text-sm text-slate-800">Users</button>
+        <!-- Section: User Management -->
+        <div id="section-users" class="admin-section hidden">
+            <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div class="p-8">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Access Control & Activity</h3>
+                    <div class="flex gap-4 mb-8">
+                        <div
+                            class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-3">
+                            <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                            <input type="text" placeholder="Search users by name or email..."
+                                class="bg-transparent w-full outline-none text-sm font-medium text-slate-600">
+                        </div>
+                        <button class="bg-slate-900 text-white px-8 rounded-xl text-sm font-bold">Filter</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        {% for u in users %}
+                        <div
+                            class="flex items-center justify-between p-5 border border-slate-100 rounded-2xl hover:bg-slate-50 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold">
+                                    {{ u.username[0]|upper }}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800">{{ u.username }}</h4>
+                                    <p class="text-sm text-slate-400 font-medium">{{ u.email }}</p>
+                                    <p class="text-[10px] text-slate-300 font-bold uppercase tracking-tighter mt-1">{{
+                                        u.scan_count }} Total Analyses</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="text-right">
+                                    {% if u.status == 'Active' %}
+                                    <div class="flex items-center gap-1.5 justify-end">
+                                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                                        <span class="text-[10px] font-black text-emerald-600 uppercase">Online</span>
+                                    </div>
+                                    {% else %}
+                                    <span class="text-[10px] font-black text-slate-300 uppercase">Offline</span>
+                                    {% endif %}
+
+                                    {% if u.last_login %}
+                                    <p class="text-[10px] text-slate-400 font-bold mt-1">
+                                        {% if u.last_login.strftime %}
+                                        Last Login: {{ u.last_login.strftime('%Y-%m-%d %H:%M') }}
+                                        {% else %}
+                                        Last Login: {{ u.last_login }}
+                                        {% endif %}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition-all"><i
+                                            class="fa-solid fa-user-gear"></i></button>
+                                    <button
+                                        class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition-all"><i
+                                            class="fa-solid fa-ban"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Source Comparison -->
+        <div id="section-compare" class="admin-section hidden bg-white rounded-3xl p-10 border border-slate-100">
+            <div class="flex justify-between items-center mb-10">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Cross-Source Intelligence</h2>
+                    <p class="text-slate-400 font-medium">Identify divergent narratives across major news outlets and
+                        independent blogs.</p>
+                </div>
                 <button
-                    class="pb-4 border-b-2 border-transparent font-bold text-sm text-slate-400 hover:text-slate-600">Activity</button>
-                <button
-                    class="pb-4 border-b-2 border-transparent font-bold text-sm text-slate-400 hover:text-slate-600">Performance</button>
-                <button
-                    class="pb-4 border-b-2 border-transparent font-bold text-sm text-slate-400 hover:text-slate-600 ml-auto">Feedback</button>
+                    class="gradient-btn text-white px-8 py-3 rounded-xl font-bold text-sm shadow-xl shadow-blue-500/20">Analyze
+                    Trends</button>
             </div>
 
-            <div class="p-8">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">User Management</h3>
-
-                <!-- Search -->
-                <div class="flex gap-4 mb-8">
-                    <div
-                        class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-3">
-                        <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
-                        <input type="text" placeholder="Search users..."
-                            class="bg-transparent w-full outline-none text-sm font-medium">
-                    </div>
-                    <button class="bg-slate-900 text-white px-8 rounded-xl text-sm font-bold">Search</button>
-                </div>
-
-                <!-- User Lists -->
-                <div class="space-y-4">
-                    {% for u in users %}
-                    <div
-                        class="flex items-center justify-between p-4 border border-slate-100 rounded-2xl hover:bg-slate-50 transition">
-                        <div>
-                            <h4 class="font-bold text-slate-800">{{ u.username }}</h4>
-                            <p class="text-sm text-slate-400">{{ u.email }}</p>
-                            <p class="text-xs text-slate-300 mt-1">{{ u.scan_count }} analyses</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            {% if u.status == 'Active' %}
-                            <span
-                                class="bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Active</span>
-                            {% else %}
-                            <span
-                                class="bg-slate-300 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Idle</span>
-                            {% endif %}
-
-                            {% if u.last_login %}
-                            <span class="text-[10px] text-slate-400 font-medium">Last: {{ u.last_login.strftime('%H:%M')
-                                }}</span>
-                            {% endif %}
-                            <button
-                                class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white transition"><i
-                                    class="fa-solid fa-shield"></i></button>
-                            <button
-                                class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-white transition"><i
-                                    class="fa-solid fa-ban"></i></button>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
+            <div class="overflow-hidden border border-slate-100 rounded-3xl">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/50 border-b border-slate-100">
+                            <th class="p-6 text-xs font-black uppercase text-slate-400 tracking-widest">Global Source
+                            </th>
+                            <th class="p-6 text-xs font-black uppercase text-slate-400 tracking-widest">Trust Integrity
+                            </th>
+                            <th class="p-6 text-xs font-black uppercase text-slate-400 tracking-widest">Sentiment Bias
+                            </th>
+                            <th class="p-6 text-xs font-black uppercase text-slate-400 tracking-widest">Platform Status
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 font-medium text-slate-600">
+                        <tr class="hover:bg-slate-50/50 transition">
+                            <td class="p-6"><span class="font-bold text-slate-800">reuters.com</span></td>
+                            <td class="p-6"><span
+                                    class="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tight">Verified
+                                    Gold</span></td>
+                            <td class="p-6 text-sm">Neutral (0.02)</td>
+                            <td class="p-6"><i class="fa-solid fa-circle-check text-emerald-500 text-xl"></i></td>
+                        </tr>
+                        <tr class="hover:bg-slate-50/50 transition">
+                            <td class="p-6"><span class="font-bold text-slate-800">bbc.co.uk</span></td>
+                            <td class="p-6"><span
+                                    class="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tight">Verified
+                                    Silver</span></td>
+                            <td class="p-6 text-sm">Minimal (0.08)</td>
+                            <td class="p-6"><i class="fa-solid fa-circle-check text-emerald-500 text-xl"></i></td>
+                        </tr>
+                        <tr class="hover:bg-slate-50/50 transition">
+                            <td class="p-6"><span class="font-bold text-slate-800">the-daily-pulse.io</span></td>
+                            <td class="p-6"><span
+                                    class="bg-orange-50 text-orange-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tight">Under
+                                    Review</span></td>
+                            <td class="p-6 text-sm">Medium (0.45)</td>
+                            <td class="p-6"><i class="fa-solid fa-clock text-orange-400 text-xl"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
     </main>
 
-    <!-- Floating Help Button -->
-    <div
-        class="fixed bottom-8 right-8 w-12 h-12 bg-slate-800 text-white rounded-full flex items-center justify-center shadow-2xl cursor-pointer hover:scale-110 transition-transform">
-        <i class="fa-solid fa-question"></i>
-    </div>
+    <script>
+        function switchAdminView(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.add('hidden'));
 
+            // Show target section
+            document.getElementById('section-' + sectionId).classList.remove('hidden');
+
+            // Update nav buttons
+            document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+                btn.classList.remove('gradient-btn', 'text-white', 'shadow-lg', 'shadow-blue-500/20');
+                btn.classList.add('bg-transparent', 'text-slate-500');
+            });
+
+            const activeBtn = document.getElementById('nav-' + sectionId);
+            activeBtn.classList.add('gradient-btn', 'text-white', 'shadow-lg', 'shadow-blue-500/20');
+            activeBtn.classList.remove('bg-transparent', 'text-slate-500');
+        }
+    </script>
 </body>
 
 </html>

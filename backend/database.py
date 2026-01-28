@@ -32,21 +32,32 @@ class MockCollection:
         if os.path.exists(self.filename):
             try:
                 with open(self.filename, 'r') as f:
-                    loaded_data = json.load(f)
-                    # Convert ISO strings back to datetime objects
-                    for doc in loaded_data:
-                        if 'timestamp' in doc and isinstance(doc['timestamp'], str):
-                            try:
-                                doc['timestamp'] = datetime.datetime.fromisoformat(doc['timestamp'])
-                            except: pass
-                    self.data = loaded_data
-                print(f"DEBUG: Loaded {len(self.data)} records for {collection_name}")
+                    content = f.read().strip()
+                    if content:
+                        loaded_data = json.loads(content)
+                        # Convert ISO strings back to datetime objects for known date fields
+                        datetime_fields = ['timestamp', 'last_login', 'created_at']
+                        for doc in loaded_data:
+                            for field in datetime_fields:
+                                if field in doc and isinstance(doc[field], str):
+                                    try:
+                                        doc[field] = datetime.datetime.fromisoformat(doc[field])
+                                    except: pass
+                        self.data = loaded_data
+                        print(f"DEBUG: Loaded {len(self.data)} records from {self.filename}")
+                    else:
+                        print(f"DEBUG: File {self.filename} is empty, using default data")
+                        self.data = data or []
             except Exception as e:
                 print(f"DEBUG Error loading mock {collection_name}: {e}")
                 self.data = data or []
         else:
             print(f"DEBUG: No existing file for {collection_name}, using default data")
             self.data = data or []
+            
+        # Ensure default data is present if data is empty
+        if not self.data and data:
+            self.data = data
             
         for doc in self.data:
             if '_id' not in doc:
@@ -144,7 +155,7 @@ mock_users = [
     {
         "username": "manivannanthenuja",
         "email": "manivannanthenuja@gmail.com",
-        "password": generate_password_hash("password")
+        "password": generate_password_hash("anypass")
     },
     {
         "username": "Demo User",
