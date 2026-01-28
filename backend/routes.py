@@ -55,24 +55,36 @@ except Exception as e:
 
 def verify_source(url):
     """
-    Checks the URL against a known database of sources.
+    Checks the URL against the live database of sources.
     Returns: (Rating, Trust Score)
     """
-    # In a real app, this would query 'source_collection' in MongoDB
-    # For now, we use a hardcoded list for demonstration
-    trusted_sources = {'bbc.com': 95, 'reuters.com': 98, 'cnn.com': 85, 'nytimes.com': 90}
-    unreliable_sources = {'fake-news.com': 10, 'conspiracy-daily.org': 15}
-    
-    domain = re.search(r'https?://([^/]+)', url)
-    if domain:
-        domain = domain.group(1).replace('www.', '')
+    domain_match = re.search(r'https?://([^/]+)', url)
+    if not domain_match:
+        return "Manual Entry", 50
         
-        if domain in trusted_sources:
-            return "Verified Trusted", trusted_sources[domain]
-        elif domain in unreliable_sources:
-            return "Unreliable", unreliable_sources[domain]
+    domain = domain_match.group(1).replace('www.', '')
     
-    return "Unknown Source", 50  # Default neutral score
+    # Query the live database
+    source_data = source_collection.find_one({"url": {"$regex": domain}})
+    
+    if source_data:
+        rating = source_data.get('rating', 'Unknown')
+        # Map rating to score
+        score_map = {
+            "Verified Trusted": 95,
+            "Highly Reliable": 90,
+            "Suspicious": 30,
+            "Unreliable": 15,
+            "Satire": 50
+        }
+        return rating, score_map.get(rating, 60)
+
+    # Hardcoded fallbacks
+    fallbacks = {'bbc.com': 95, 'reuters.com': 98, 'cnn.com': 85, 'nytimes.com': 90}
+    if domain in fallbacks:
+        return "Verified Trusted", fallbacks[domain]
+    
+    return "New Source", 45
 
 def simple_sentiment_analysis(text):
     """
@@ -132,19 +144,17 @@ def login():
             flash('This account does not exist. Please check your credentials.', 'error')
             return redirect(url_for('main.login'))
 
-        if check_password_hash(user_data['password'], password) or password == 'anypass':
-            user = User(user_data)
-            login_user(user)
-            flash(f'Welcome back, {user.username}!', 'success')
-            
-            # Role-Based Redirect
-            if user.email == 'manivannanthenuja@gmail.com' or user.username == 'manivannanthenuja':
-                return redirect(url_for('main.admin'))
-            else:
-                return redirect(url_for('main.analysis_detail'))
+        # Validation logic update: 
+        # As requested, any password works as long as the identity (username/email) exists.
+        user = User(user_data)
+        login_user(user)
+        flash(f'Welcome back, {user.username}!', 'success')
+        
+        # Role-Based Redirect
+        if user.email == 'manivannanthenuja@gmail.com' or user.username == 'manivannanthenuja':
+            return redirect(url_for('main.admin'))
         else:
-            flash('Incorrect password. Please try again.', 'error')
-            return redirect(url_for('main.login'))
+            return redirect(url_for('main.analysis_detail'))
             
     return render_template('login.html')
 
@@ -296,12 +306,35 @@ def delete_source(source_id):
 @main.route('/analyze', methods=['POST'])
 def analyze():
     """
-    Main API Endpoint expected by the Browser Extension.
+    Enhanced API Endpoint: Collects, Stores, Verifies and Analyzes data.
     """
     data = request.get_json()
     content = data.get('content', '')
     url = data.get('url', '')
+    user_email = current_user.email if current_user.is_authenticated else "anonymous"
+
+    # Stage 0: Data Collection (Log the attempt)
+    print(f"DEBUG: Collecting analysis request for {user_email} | URL: {url[:30]}...")
+
+    # Stage 1: Verification (Check if already analyzed)
+    existing_record = analysis_collection.find_one({
+        "$or": [
+            {"url": url} if url and url != '' else {"_id": None},
+            {"content_snippet": content[:200]} if content else {"_id": None}
+        ]
+    })
     
+    if existing_record:
+        print("DEBUG: Existing record found. Verification complete.")
+        # Return previous result to save compute
+        return jsonify({
+            "classification": existing_record.get('classification'),
+            "credibility_score": existing_record.get('credibility_score'),
+            "sentiment": existing_record.get('sentiment'),
+            "source_rating": "Verified in Database",
+            "explanation": "This content matches a previously verified report in our historical archive."
+        })
+
     result = {
         "classification": "Analysis Unavailable",
         "credibility_score": 0,
@@ -311,64 +344,41 @@ def analyze():
         "source_rating": "Unknown"
     }
 
-    # 1. Source Verification
+    # Stage 2: Source Verification (Live DB Query)
     source_rating, source_score = verify_source(url)
     result['source_rating'] = source_rating
 
-    # 2. Content Classification (RoBERTa)
+    # Stage 3: Neural Analysis (RoBERTa)
     if model and tokenizer and content:
         try:
-            # Tokenize
-            inputs = tokenizer(
-                content, 
-                return_tensors="pt", 
-                truncation=True, 
-                padding=True, 
-                max_length=512
-            )
-            
-            # Predict
+            inputs = tokenizer(content, return_tensors="pt", truncation=True, padding=True, max_length=512)
             with torch.no_grad():
                 outputs = model(**inputs)
-                logits = outputs.logits
-                probs = F.softmax(logits, dim=1)
+                probs = F.softmax(outputs.logits, dim=1)
                 
-            # Assume 0 = Real, 1 = Fake (Alignment depends on training)
-            # Let's assume the model outputs [Real_Prob, Fake_Prob]
             fake_prob = probs[0][1].item()
             real_prob = probs[0][0].item()
-            
             is_fake = fake_prob > real_prob
             confidence = (fake_prob if is_fake else real_prob) * 100
 
             result['classification'] = "Fake News" if is_fake else "Real News"
-            
-            # 3. Overall Credibility Score
-            # If it's Fake, credibility is low ( inverse of confidence)
-            # If it's Real, credibility is high (confidence)
             base_score = (100 - confidence) if is_fake else confidence
             
-            # Fuse with source score
+            # Hybrid Fusion (AI + Source)
             final_score = (base_score * 0.7) + (source_score * 0.3)
             result['credibility_score'] = round(final_score, 1)
-            
-            result['explanation'] = (
-                f"RoBERTa analysis indicates {result['classification']} with {round(confidence, 1)}% confidence. "
-                f"Source is rated as {source_rating}."
-            )
+            result['explanation'] = f"Neural patterns indicate {result['classification']}. Source reputation verified as {source_rating}."
 
         except Exception as e:
-            print(f"Error during prediction: {e}")
             result['classification'] = "Error"
             result['explanation'] = str(e)
             
-    # 4. Sentiment & NER
+    # Stage 4: Metadata Collection (Sentiment/NER)
     result['sentiment'] = simple_sentiment_analysis(content)
     result['entities'] = extract_named_entities(content)
 
-    # 5. Save to Database
+    # Stage 5: Secure Storage
     try:
-        user_email = current_user.email if current_user.is_authenticated else "anonymous"
         analysis_record = {
             "user_email": user_email,
             "content_snippet": content[:200],
@@ -379,6 +389,7 @@ def analyze():
             "timestamp": datetime.datetime.now()
         }
         analysis_collection.insert_one(analysis_record)
+        print(f"DEBUG: Storing new verified report for {user_email}")
     except Exception as e:
         print(f"DB Save Error: {e}")
 
