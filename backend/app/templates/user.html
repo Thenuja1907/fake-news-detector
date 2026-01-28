@@ -252,12 +252,9 @@
                         {% if analysis.classification == "Fake News" %}
                         Forensic analysis detected linguistic markers typical of disinformation. High reliance on
                         hyperbolic language and lack of multi-source verification.
-                        {% elif analysis.classification == "Real News" %}
+                        {% else %}
                         Content exhibits balanced reporting and corresponds with established factual patterns. No
                         immediate red flags for misinformation detected.
-                        {% else %}
-                        Insufficient text content for a deep neural assessment. Please paste the full article text in
-                        the 'Analyze' section for a complete forensic report.
                         {% endif %}
                     </p>
                     <button

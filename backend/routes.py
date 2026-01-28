@@ -504,28 +504,39 @@ def analyze():
         # Standard balanced weighting: 40% Neural, 40% Source, 20% Forensic
         final_bias_index = (neural_fake_prob * 0.40) + (source_bias * 0.40) + (bias_score * 0.20)
     
-    # Decision Logic: 
-    # Handle extremely short inputs (Allow fake news detection if bias is extremely high)
-    if len(content.split()) < 10 and source_rating == "Manual Entry" and bias_score < 0.45:
-        result['classification'] = "Insufficient Data"
-        result['credibility_score'] = 50.0
-        result['explanation'] = "Analysis Inconclusive. The input text is too short for a reliable forensic scan."
-    elif 0.48 <= final_bias_index <= 0.52:  # Narrowed range for mixed signals
-        result['classification'] = "Insufficient Data"
-        result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
-        result['explanation'] = "Mixed Signals Detected. The system found both credible and suspicious markers."
-    elif final_bias_index > 0.47:  # Adjusted threshold
+    # Decision Logic: Binary Classification with Confidence Levels
+    # Eliminate "Insufficient Data" - Force decisive classification
+    
+    # Handle extremely short inputs - still make a decision based on available signals
+    if len(content.split()) < 10 and source_rating == "Manual Entry":
+        if bias_score >= 0.45:
+            # High bias detected even in short text
+            result['classification'] = "Fake News"
+            result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
+            result['explanation'] = "Fake News detected. Despite limited text, strong deceptive markers identified."
+        else:
+            # Low bias, assume legitimate
+            result['classification'] = "Real News"
+            result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
+            result['explanation'] = "Real News. Limited text but no significant deceptive indicators found."
+    elif final_bias_index >= 0.50:
+        # Bias index at or above 50% = Fake News
         result['classification'] = "Fake News"
         result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
+        confidence = "High" if final_bias_index > 0.60 else "Moderate" if final_bias_index > 0.50 else "Low"
+        result['explanation'] = f"Fake News ({confidence} Confidence). Multiple deceptive indicators detected."
     else:
+        # Bias index below 50% = Real News
         result['classification'] = "Real News"
         result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
+        confidence = "High" if final_bias_index < 0.35 else "Moderate" if final_bias_index < 0.45 else "Low"
+        result['explanation'] = f"Real News ({confidence} Confidence). Content aligns with verified reporting standards."
 
-    # Detailed Forensic Log
-    if result['classification'] not in ["Insufficient Data", "Indeterminate"]:
-        forensic_log = "Linguistic markers " + ("match propaganda patterns." if bias_score > 0.55 else "align with verified reporting.")
-        source_log = f"Source {source_rating}."
-        result['explanation'] = f"{result['classification']} analysis complete. {source_log} {forensic_log}"
+    # Enhanced Forensic Log
+    forensic_log = "Linguistic markers " + ("match propaganda patterns." if bias_score > 0.55 else "align with verified reporting.")
+    source_log = f"Source {source_rating}."
+    result['explanation'] = f"{result['classification']} analysis complete. {source_log} {forensic_log}"
+
 
     # Stage 6: Persistent Storage & Historical Tracking
     try:

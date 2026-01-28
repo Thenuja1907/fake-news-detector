@@ -428,5 +428,33 @@
         "sentiment": "Neutral",
         "timestamp": "2026-01-29T00:01:42.657215",
         "_id": "a82158ff196dfef73b6fc863"
+    },
+    {
+        "user_email": "thenuja@gmail.com",
+        "content_snippet": "Viral news claims AI robot will eliminate all jobs in a month; no evidence supports this.",
+        "url": "",
+        "classification": "Fake News",
+        "credibility_score": 42.3,
+        "source_rating": "Manual Entry",
+        "source_score": 40,
+        "bias_score": 0.6,
+        "neural_prob": 0.5090187191963196,
+        "sentiment": "Neutral",
+        "timestamp": "2026-01-29T00:13:10.737111",
+        "_id": "235b080416fd4f3ed3393c63"
+    },
+    {
+        "user_email": "thenuja@gmail.com",
+        "content_snippet": "Finance ministry introduced tax reforms for small businesses, effective next quarter.",
+        "url": "",
+        "classification": "Real News",
+        "credibility_score": 57.4,
+        "source_rating": "Manual Entry",
+        "source_score": 40,
+        "bias_score": 0.35,
+        "neural_prob": 0.5040217638015747,
+        "sentiment": "Neutral",
+        "timestamp": "2026-01-29T00:13:26.265943",
+        "_id": "3d8fedcf8d1d0138ddfc61b3"
     }
 ]
