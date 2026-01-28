@@ -50,6 +50,30 @@
 
     <main class="max-w-7xl mx-auto px-6 py-8">
 
+        <!-- Top Stats Cards (Accurate Global/User Metrics) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <!-- Total Analyses -->
+            <div class="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 shadow-sm">
+                <p class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-1">Total Analyses</p>
+                <h3 class="text-3xl font-bold text-slate-800">{{ stats.total }}</h3>
+            </div>
+            <!-- Trustworthy -->
+            <div class="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100 shadow-sm">
+                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1">Trustworthy</p>
+                <h3 class="text-3xl font-bold text-slate-800">{{ stats.trustworthy }}</h3>
+            </div>
+            <!-- Suspicious -->
+            <div class="bg-orange-50/50 rounded-2xl p-6 border border-orange-100 shadow-sm">
+                <p class="text-[10px] font-black uppercase tracking-widest text-orange-400 mb-1">Suspicious (Fake)</p>
+                <h3 class="text-3xl font-bold text-slate-800">{{ stats.fake }}</h3>
+            </div>
+            <!-- Accuracy Rate -->
+            <div class="bg-purple-50/50 rounded-2xl p-6 border border-purple-100 shadow-sm">
+                <p class="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-1">Accuracy Rate</p>
+                <h3 class="text-3xl font-bold text-slate-800">{{ stats.accuracy }}%</h3>
+            </div>
+        </div>
+
         <!-- Decision Banner -->
         {% if analysis.classification == "Fake News" %}
         <div
@@ -170,22 +194,23 @@
                         <div>
                             <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
                                 <span>Neural Pattern Matching</span>
-                                <span>{{ analysis.credibility_score }}%</span>
+                                <span>{{ (analysis.neural_prob * 100)|round|int if analysis.neural_prob else 50
+                                    }}%</span>
                             </div>
                             <div class="w-full bg-slate-100 rounded-full h-2">
-                                <div class="h-2 rounded-full {{ 'bg-red-400' if analysis.credibility_score < 50 else 'bg-emerald-400' }}"
-                                    style="width: var(--score, 50%); --score: {{ analysis.credibility_score|default(50) }}%;">
+                                <div class="h-2 rounded-full bg-purple-400"
+                                    style="width: {{ (analysis.neural_prob * 100)|default(50) }}%;">
                                 </div>
                             </div>
                         </div>
                         <div>
                             <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
                                 <span>Source Authority</span>
-                                <span>{{ 50 if "Mock" in analysis.url else 85 }}%</span>
+                                <span>{{ analysis.source_score|default(50) }}%</span>
                             </div>
                             <div class="w-full bg-slate-100 rounded-full h-2">
                                 <div class="bg-blue-400 h-2 rounded-full"
-                                    style="width: var(--auth, 85%); --auth: {{ 50 if 'Mock' in analysis.url else 85 }}%;">
+                                    style="width: {{ analysis.source_score|default(50) }}%;">
                                 </div>
                             </div>
                         </div>

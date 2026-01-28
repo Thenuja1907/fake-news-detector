@@ -300,8 +300,10 @@
                         <p class="text-xs text-slate-400 uppercase font-bold mt-1">{{ item.timestamp.strftime('%Y-%m-%d
                             %H:%M') }}</p>
                     </div>
-                    <span
-                        class="px-3 py-1 rounded-full text-[10px] font-bold uppercase {{ 'bg-red-100 text-red-600' if item.classification == 'Fake News' else 'bg-green-100 text-green-600' }}">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase 
+                        {% if item.classification == 'Fake News' %} bg-red-100 text-red-600 
+                        {% elif item.classification == 'Insufficient Data' %} bg-slate-100 text-slate-600
+                        {% else %} bg-green-100 text-green-600 {% endif %}">
                         {{ item.classification }}
                     </span>
                 </div>

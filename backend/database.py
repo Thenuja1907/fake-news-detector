@@ -17,13 +17,43 @@ db = client["fake_news_db"]
 
 # --- MOCK FALLBACK SYSTEM ---
 # This ensures the app works even if MongoDB Atlas is inaccessible
+import json
+import os
+
 class MockCollection:
-    def __init__(self, data=None):
+    def __init__(self, data=None, collection_name="default"):
         import secrets
-        self.data = data or []
+        self.filename = f"mock_{collection_name}.json"
+        
+        # Try to load existing data
+        if os.path.exists(self.filename):
+            try:
+                with open(self.filename, 'r') as f:
+                    self.data = json.load(f)
+            except:
+                self.data = data or []
+        else:
+            self.data = data or []
+            
         for doc in self.data:
             if '_id' not in doc:
                 doc['_id'] = secrets.token_hex(12)
+        
+        self._save()
+
+    def _save(self):
+        try:
+            # Handle non-serializable objects (like datetime)
+            def default_serializer(obj):
+                if isinstance(obj, datetime.datetime):
+                    return obj.isoformat()
+                return str(obj)
+            
+            with open(self.filename, 'w') as f:
+                json.dump(self.data, f, default=default_serializer)
+        except:
+            pass
+
     def find_one(self, query, sort=None):
         # Handle $or separately
         if '$or' in query:
@@ -51,23 +81,19 @@ class MockCollection:
             if match: results.append(item)
         
         if not results: return None
-        # Sort by timestamp if possible
-        if sort:
-            # Basic dummy sort to pick the 'latest' index-wise for mock
-            return results[-1]
+        if sort: return results[-1]
         return results[0]
 
     def insert_one(self, doc):
         if '_id' not in doc:
             import secrets
-            doc['_id'] = secrets.token_hex(12) # 24 characters total
+            doc['_id'] = secrets.token_hex(12)
         self.data.append(doc)
+        self._save()
         return type('OBJ', (), {'inserted_id': doc['_id']})
     
     def find(self, query=None, sort=None, limit=None):
-        if not query: 
-            return MockCursor(self.data)
-        # Simple filter
+        if not query: return MockCursor(self.data)
         filtered = [item for item in self.data if all(item.get(k) == v for k, v in query.items())]
         return MockCursor(filtered) 
     
@@ -76,26 +102,21 @@ class MockCollection:
         return len([item for item in self.data if all(item.get(k) == v for k, v in query.items())])
 
     def update_one(self, query, update):
-        # Very simple mock update logic
         target = self.find_one(query)
         if target and '$set' in update:
             for k, v in update['$set'].items():
                 target[k] = v
+            self._save()
         return type('OBJ', (), {'modified_count': 1 if target else 0})
 
     def aggregate(self, pipeline):
-        # Specific mock implementation for the stats average
-        # We only look for the $avg operation in the pipeline
         match_query = {}
         for stage in pipeline:
-            if '$match' in stage:
-                match_query = stage['$match']
+            if '$match' in stage: match_query = stage['$match']
         
         filtered = [item for item in self.data if all(item.get(k) == v for k, v in match_query.items())]
-        
         total_score = sum(item.get('credibility_score', 0) for item in filtered)
         avg_score = total_score / len(filtered) if filtered else 0
-        
         return [{"avg_score": avg_score}]
 
 class MockCursor:
@@ -106,13 +127,16 @@ class MockCursor:
     def __iter__(self): return iter(self.data)
     def __list__(self): return self.data
 
-# Initialize default mock data for Demo
-# 24-char hex IDs for compatibility with ObjectId()
 mock_users = [
     {
         "username": "manivannanthenuja",
         "email": "manivannanthenuja@gmail.com",
         "password": generate_password_hash("password")
+    },
+    {
+        "username": "Demo User",
+        "email": "user@demo.com",
+        "password": generate_password_hash("anypass")
     },
     {
         "username": "John Doe",
@@ -122,11 +146,6 @@ mock_users = [
     {
         "username": "Jane Smith",
         "email": "jane@example.com",
-        "password": generate_password_hash("password")
-    },
-    {
-        "username": "Alice Johnson",
-        "email": "alice@guardian.ai",
         "password": generate_password_hash("password")
     }
 ]
@@ -146,7 +165,7 @@ except Exception as e:
     analysis_collection = MockCollection([
         {
             "_id": "00000000000000000000000c",
-            "user_email": "user@truth.guardian",
+            "user_email": "user@demo.com",
             "content_snippet": "New study suggests that drinking 5 cups of coffee daily grants immortality.",
             "url": "https://daily-science-buzz.com/immortality-coffee",
             "classification": "Fake News",
@@ -154,7 +173,7 @@ except Exception as e:
             "sentiment": "Excitement",
             "timestamp": datetime.datetime.now()
         }
-    ])
+    ], collection_name="analyses")
     source_collection = MockCollection([
         {"name": "BBC News", "url": "bbc.com", "rating": "Verified Trusted"},
         {"name": "Reuters", "url": "reuters.com", "rating": "Verified Trusted"},
@@ -166,6 +185,6 @@ except Exception as e:
         {"name": "Conspiracy Blog", "url": "conspiracy-blog.com", "rating": "Unreliable"},
         {"name": "Fake News Blog", "url": "fake-news-blog.com", "rating": "Unreliable"},
         {"name": "Misinfo Today", "url": "misinfo-today.org", "rating": "Unreliable"}
-    ])
-    user_collection = MockCollection(mock_users)
+    ], collection_name="sources")
+    user_collection = MockCollection(mock_users, collection_name="users")
 

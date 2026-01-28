@@ -66,12 +66,15 @@ def verify_source(url):
     Checks the URL or File Path against the live database of sources.
     Returns: (Rating, Trust Score)
     """
-    # 1. Check for local demo files & keywords (Hyphen and Underscore)
     url_clean = url.lower()
-    if 'news-' in url_clean or 'news_' in url_clean or 'verified' in url_clean or 'official' in url_clean:
-        return "Verified Trusted", 95
-    if 'fake-' in url_clean or 'fake_' in url_clean or 'conspiracy' in url_clean or 'blog' in url_clean:
+    
+    # 1. Check for Negative Indicators first (Higher priority)
+    if any(k in url_clean for k in ['fake-', 'fake_', 'conspiracy', 'blog', 'propaganda', 'hoax', 'clickbait']):
         return "Unreliable", 15
+        
+    # 2. Check for Positive Indicators
+    if any(k in url_clean for k in ['news-', 'news_', 'verified', 'official', 'gov', 'edu', 'reuters', 'bbc']):
+        return "Verified Trusted", 95
 
     domain_match = re.search(r'https?://([^/]+)', url)
     if not domain_match:
@@ -95,7 +98,7 @@ def verify_source(url):
         return rating, score_map.get(rating, 60)
 
     # Hardcoded fallbacks
-    fallbacks = {'bbc.com': 95, 'reuters.com': 98, 'cnn.com': 85, 'nytimes.com': 90}
+    fallbacks = {'bbc.com': 95, 'reuters.com': 98, 'cnn.com': 85, 'nytimes.com': 90, 'apnews.com': 95}
     if domain in fallbacks:
         return "Verified Trusted", fallbacks[domain]
     
@@ -104,7 +107,6 @@ def verify_source(url):
 def simple_sentiment_analysis(text):
     """
     Basic sentiment analysis using keyword counting.
-    Proposal requires: Positive/Negative/Neutral
     """
     positive_words = set(['good', 'great', 'excellent', 'amazing', 'success', 'improvement', 'win'])
     negative_words = set(['bad', 'terrible', 'failure', 'disaster', 'loss', 'death', 'crisis'])
@@ -122,7 +124,6 @@ def simple_sentiment_analysis(text):
 def extract_named_entities(text):
     """
     Basic PER/ORG extractions using Capitalized Words heuristics.
-    Proposal requires: NER
     """
     # Look for capitalized words that are not at the start of a sentence
     entities = re.findall(r'(?<!\.\s)\b[A-Z][a-z]+\b', text)
@@ -136,30 +137,41 @@ def perform_forensic_check(text):
     Linguistic forensic analysis to detect common markers of fake news.
     Returns: Bias Score (0 to 1, higher means more likely fake)
     """
-    bias_score = 0.0
+    bias_score = 0.2 # Baseline neutral-low
+    text_lower = text.lower()
     
-    # 1. Clickbait/Sensationalist Keywords (High threshold)
-    sensational_words = ['unbelievable', 'mind-blowing', 'exposed', 'shocking', 'miracle', 'won\'t believe', 'immortality', 'magic', 'cloning']
-    matches = [w for w in sensational_words if w in text.lower()]
-    if len(matches) > 1:
-        bias_score += 0.3
+    # 1. Clickbait/Sensationalist/Narrative Keywords
+    sensational_words = [
+        'unbelievable', 'mind-blowing', 'exposed', 'shocking', 'miracle', 
+        'won\'t believe', 'immortality', 'magic', 'cloning', 'hoax', 'lie', 
+        'hidden truth', 'scientists hate', 'government secret', 'propaganda',
+        'conspiracy', 'scam', 'fake news', 'censored', 'fabricated',
+        'invented by scientists', 'get funding', 'earth is actually getting colder',
+        'secret agenda', 'mainstream media hides', 'crisis actor', 'false flag'
+    ]
+    matches = [w for w in sensational_words if w in text_lower]
+    if len(matches) > 0:
+        # Increase bias score significantly for narrative matches
+        bias_score += 0.35 * min(len(matches), 2) 
     
     # 2. Punctuation Abuse (Exclamation marks)
-    if text.count('!') > 3:
-        bias_score += 0.2
+    if text.count('!') > 1:
+        bias_score += 0.15
         
-    # 3. Capitalization Intensity (SHOUTING) - High threshold for headlines
+    # 3. Capitalization Intensity (SHOUTING)
     capitals = sum(1 for c in text if c.isupper())
-    if len(text) > 50 and (capitals / len(text)) > 0.4:
-        bias_score += 0.3
+    if len(text) > 30 and (capitals / len(text)) > 0.3:
+        bias_score += 0.25
         
-    # 4. Lack of Citation Phrases (Only minor signal)
-    citations = ['according to', 'stated in', 'documented', 'official reports', 'sourced by']
-    has_citation = any(c in text.lower() for c in citations)
+    # 4. Lack of Citation Phrases
+    citations = ['according to', 'stated in', 'documented', 'official reports', 'sourced by', 'research shows', 'study published in']
+    has_citation = any(c in text_lower for c in citations)
     if not has_citation:
-        bias_score += 0.1
+        bias_score += 0.2
+    else:
+        bias_score -= 0.15 # Real news usually has these
         
-    return min(bias_score, 1.0)
+    return max(min(bias_score, 1.0), 0.0)
 
 # --- Routes ---
 
@@ -306,17 +318,31 @@ def dashboard():
 @main.route('/analysis_detail')
 @login_required
 def analysis_detail():
-    # Fetch the LATEST analysis for this specific user
+    user_email = current_user.email
+    # 1. Fetch latest record
     latest_analysis = analysis_collection.find_one(
-        {"user_email": current_user.email},
+        {"user_email": user_email},
         sort=[("timestamp", -1)]
     )
     
-    # If no analysis exists yet, use a default dummy or redirect
     if not latest_analysis:
         return redirect(url_for('main.dashboard'))
         
-    return render_template('user.html', analysis=latest_analysis)
+    # 2. Calculate User Stats for the detail header
+    all_user_records = list(analysis_collection.find({"user_email": user_email}))
+    total = len(all_user_records)
+    fake = sum(1 for x in all_user_records if x.get('classification') == "Fake News")
+    trust = total - fake
+    
+    # Accuracy Proxy
+    if total > 0:
+        accuracy = round(sum(x.get('credibility_score', 0) for x in all_user_records) / total, 1)
+    else:
+        accuracy = 0
+        
+    stats = {"total": total, "trustworthy": trust, "fake": fake, "accuracy": accuracy}
+    
+    return render_template('user.html', analysis=latest_analysis, stats=stats)
 
 @main.route('/admin')
 @login_required
@@ -439,22 +465,24 @@ def analyze():
             neural_fake_prob = 0.5
     
     # Stage 5: Evidence Fusion & Result Consolidation
-    # Re-weighting: 35% Neural, 45% Source, 20% Forensic
-    # Source Reputation is the strongest signal for URL-based scanning.
-    source_bias = (100 - source_score) / 100
-    
-    # Combined Bias Index
-    final_bias_index = (neural_fake_prob * 0.35) + (source_bias * 0.45) + (bias_score * 0.20)
+    # Dynamic Weighting: If source is unknown/manual, trust Forensic signals more.
+    if source_rating in ["Manual Entry", "New Source"]:
+        # 30% Neural, 20% Source, 50% Forensic
+        final_bias_index = (neural_fake_prob * 0.30) + (source_bias * 0.20) + (bias_score * 0.50)
+    else:
+        # Standard balanced weighting: 40% Neural, 40% Source, 20% Forensic
+        final_bias_index = (neural_fake_prob * 0.40) + (source_bias * 0.40) + (bias_score * 0.20)
     
     # Decision Logic: 
-    # > 0.55 is Fake
-    # < 0.45 is Real
-    # Between 0.45 and 0.55 is Insufficient/Inconclusive
-    
-    if 0.45 <= final_bias_index <= 0.55 and source_rating == "Unknown Source":
+    # Handle extremely short inputs
+    if len(content.split()) < 10 and source_rating == "Manual Entry":
+        result['classification'] = "Insufficient Data"
+        result['credibility_score'] = 50.0
+        result['explanation'] = "Analysis Inconclusive. The input text is too short for a reliable forensic scan. Please provide more content."
+    elif 0.49 <= final_bias_index <= 0.51 and source_rating in ["New Source", "Manual Entry"]:
         result['classification'] = "Insufficient Data"
         result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
-        result['explanation'] = "Analysis Inconclusive. The system detected mixed signals and requires more text for forensic scanning."
+        result['explanation'] = "Mixed Signals Detected. The system found both credible and suspicious markers. Further human verification advised."
     elif final_bias_index > 0.50:
         result['classification'] = "Fake News"
         result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
@@ -463,9 +491,9 @@ def analyze():
         result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
 
     # Detailed Forensic Log
-    if result['classification'] != "Insufficient Data":
-        forensic_log = "Linguistic markers " + ("match propaganda patterns." if bias_score > 0.6 else "confirm formal reportage.")
-        source_log = f"Source reputation is {source_rating}."
+    if result['classification'] not in ["Insufficient Data", "Indeterminate"]:
+        forensic_log = "Linguistic markers " + ("match propaganda patterns." if bias_score > 0.55 else "align with verified reporting.")
+        source_log = f"Source {source_rating}."
         result['explanation'] = f"{result['classification']} analysis complete. {source_log} {forensic_log}"
 
     # Stage 6: Persistent Storage & Historical Tracking
@@ -477,6 +505,10 @@ def analyze():
             "url": url,
             "classification": result['classification'],
             "credibility_score": result['credibility_score'],
+            "source_rating": source_rating,
+            "source_score": source_score,
+            "bias_score": bias_score,
+            "neural_prob": neural_fake_prob,
             "sentiment": simple_sentiment_analysis(content),
             "timestamp": datetime.datetime.now()
         }
