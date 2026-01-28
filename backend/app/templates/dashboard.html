@@ -21,6 +21,18 @@
             border-bottom: 2px solid #6366f1;
             color: #1e293b;
         }
+
+        .tab-btn.active {
+            background-color: white;
+            color: #1e293b;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .navbar-btn.active {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            color: white;
+            box-shadow: 0 10px 15px -3px rgb(59 130 246 / 0.3);
+        }
     </style>
 </head>
 
@@ -51,11 +63,9 @@
                     </div>
                     <span class="text-sm font-bold text-slate-600">{{ user.email }}</span>
                 </div>
-                <!-- 
-                <a href="/logout" class="text-slate-400 hover:text-red-500 transition-colors">
+                <a href="/logout" class="text-slate-400 hover:text-red-500 transition-colors" title="Logout">
                     <i class="fa-solid fa-power-off"></i>
                 </a>
-                 -->
             </div>
         </div>
     </header>
@@ -112,48 +122,50 @@
         <!-- Navigation Bar -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-2 mb-8 flex items-center justify-between">
             <div class="flex gap-2">
-                <button
-                    class="gradient-btn text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/30 flex items-center gap-2">
+                <button onclick="switchView('analyze')" id="nav-analyze"
+                    class="navbar-btn active px-8 py-3 rounded-xl font-bold text-sm transition flex items-center gap-2">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze
                 </button>
-                <button
-                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                <button onclick="switchView('dashboard')" id="nav-dashboard"
+                    class="navbar-btn bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
                     <i class="fa-solid fa-chart-column"></i> Dashboard
                 </button>
-                <button
-                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                <button onclick="switchView('history')" id="nav-history"
+                    class="navbar-btn bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
                     <i class="fa-solid fa-clock-rotate-left"></i> History
                 </button>
-                <button
-                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
+                <button onclick="switchView('compare')" id="nav-compare"
+                    class="navbar-btn bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
                     <i class="fa-solid fa-code-compare"></i> Compare
                 </button>
             </div>
         </div>
 
-        <!-- Content Analysis Section -->
-        <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-10 min-h-[500px]">
+        <!-- Content Sections -->
+        <div id="section-analyze"
+            class="content-section bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-10 min-h-[500px]">
             <h2 class="text-2xl font-bold text-blue-600 mb-2">Content Analysis</h2>
             <p class="text-slate-400 mb-8 font-medium">Analyze text directly, paste URLs, or upload files (PDF, HTML,
                 TXT)</p>
 
             <div class="flex gap-4 mb-8 bg-slate-50 p-2 rounded-2xl w-fit">
                 <button onclick="switchMode('text')" id="tab-text"
-                    class="bg-white text-slate-800 px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-all focus:ring-2 ring-blue-500">
+                    class="tab-btn active px-8 py-3 rounded-xl font-bold text-sm transition-all">
                     <i class="fa-solid fa-font mr-2"></i> Text
                 </button>
                 <button onclick="switchMode('url')" id="tab-url"
-                    class="text-slate-500 px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/50 transition-all">
+                    class="tab-btn text-slate-500 px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/50 transition-all">
                     <i class="fa-solid fa-link mr-2"></i> URL
                 </button>
-                <button class="text-slate-400 px-8 py-3 rounded-xl font-bold text-sm cursor-not-allowed opacity-50">
+                <button onclick="switchMode('file')" id="tab-file"
+                    class="tab-btn text-slate-500 px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/50 transition-all">
                     <i class="fa-regular fa-file mr-2"></i> File
                 </button>
             </div>
 
             <!-- Input Area -->
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-3 ml-1">Enter or paste text
-                content</label>
+            <label id="input-label" class="block text-xs font-bold text-slate-700 uppercase mb-3 ml-1">Enter or paste
+                text content</label>
 
             <!-- Text Mode -->
             <div id="input-text-mode">
@@ -169,6 +181,17 @@
                     placeholder="https://example.com/article">
             </div>
 
+            <!-- File Mode -->
+            <div id="input-file-mode" class="hidden">
+                <div
+                    class="w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-12 flex flex-col items-center justify-center gap-4 hover:bg-slate-100 transition-colors cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up text-4xl text-slate-300"></i>
+                    <p class="text-slate-500 font-bold">Drag and drop your file here or <span
+                            class="text-blue-600">click to browse</span></p>
+                    <p class="text-xs text-slate-400">Supported formats: PDF, HTML, TXT (Max 5MB)</p>
+                </div>
+            </div>
+
             <div class="flex justify-end mt-6">
                 <button onclick="runAnalysis()"
                     class="gradient-btn text-white px-10 py-4 rounded-xl font-bold text-base shadow-xl shadow-blue-600/20 hover:shadow-blue-600/40 hover:-translate-y-1 transition-all active:scale-95 flex items-center gap-3">
@@ -177,6 +200,37 @@
             </div>
 
             <p class="text-center text-xs text-slate-300 mt-10">Protected by Truth Guardian AI Engine v2.4</p>
+        </div>
+
+        <!-- Other Sections (Placeholders) -->
+        <div id="section-dashboard" class="content-section hidden bg-white rounded-3xl p-10 border border-slate-100">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">Analytics Dashboard</h2>
+            <p class="text-slate-500">Global performance metrics and system health monitoring.</p>
+        </div>
+
+        <div id="section-history" class="content-section hidden bg-white rounded-3xl p-10 border border-slate-100">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">Analysis History</h2>
+            <p class="text-slate-500">Review your past forensic reports and verification data.</p>
+            <div class="mt-8 space-y-4">
+                {% for item in history %}
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div>
+                        <h4 class="font-bold text-slate-800 truncate max-w-sm">{{ item.content_snippet }}</h4>
+                        <p class="text-xs text-slate-400 uppercase font-bold mt-1">{{ item.timestamp.strftime('%Y-%m-%d
+                            %H:%M') }}</p>
+                    </div>
+                    <span
+                        class="px-3 py-1 rounded-full text-[10px] font-bold uppercase {{ 'bg-red-100 text-red-600' if item.classification == 'Fake News' else 'bg-green-100 text-green-600' }}">
+                        {{ item.classification }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="section-compare" class="content-section hidden bg-white rounded-3xl p-10 border border-slate-100">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">Source Comparison</h2>
+            <p class="text-slate-500">Contrast multiple reports to identify cross-platform information trends.</p>
         </div>
 
     </main>
@@ -188,22 +242,52 @@
     </div>
 
     <script>
+        function switchView(viewName) {
+            // Update Navbar buttons
+            document.querySelectorAll('.navbar-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-gradient-to-r', 'from-blue-600', 'to-purple-600', 'text-white', 'shadow-lg');
+                btn.classList.add('bg-transparent', 'text-slate-500');
+            });
+
+            const activeNav = document.getElementById('nav-' + viewName);
+            activeNav.classList.add('active');
+            activeNav.classList.remove('bg-transparent', 'text-slate-500');
+
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
+
+            // Show target section
+            document.getElementById('section-' + viewName).classList.remove('hidden');
+        }
+
         function switchMode(mode) {
-            const textTab = document.getElementById('tab-text');
-            const urlTab = document.getElementById('tab-url');
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active', 'text-slate-800'));
+            tabs.forEach(tab => tab.classList.add('text-slate-500'));
+
+            const activeTab = document.getElementById('tab-' + mode);
+            activeTab.classList.add('active');
+            activeTab.classList.remove('text-slate-500');
+            activeTab.classList.add('text-slate-800');
+
             const textMode = document.getElementById('input-text-mode');
             const urlMode = document.getElementById('input-url-mode');
+            const fileMode = document.getElementById('input-file-mode');
+            const label = document.getElementById('input-label');
+
+            textMode.classList.add('hidden');
+            urlMode.classList.add('hidden');
+            fileMode.classList.add('hidden');
 
             if (mode === 'text') {
-                textTab.className = "bg-white text-slate-800 px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-all focus:ring-2 ring-blue-500";
-                urlTab.className = "text-slate-500 px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/50 transition-all";
                 textMode.classList.remove('hidden');
-                urlMode.classList.add('hidden');
-            } else {
-                urlTab.className = "bg-white text-slate-800 px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-all focus:ring-2 ring-blue-500";
-                textTab.className = "text-slate-500 px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/50 transition-all";
+                label.textContent = "Enter or paste text content";
+            } else if (mode === 'url') {
                 urlMode.classList.remove('hidden');
-                textMode.classList.add('hidden');
+                label.textContent = "Paste article URL for analysis";
+            } else {
+                fileMode.classList.remove('hidden');
+                label.textContent = "Upload document for deep scan";
             }
         }
 
@@ -224,13 +308,10 @@
                 });
                 const data = await res.json();
 
-                // For this demo, simple alert, in real app we update UI using the nice cards from image
-                alert(`Analysis Complete!\nVerdict: ${data.classification}\nScore: ${data.credibility_score}%\n\n${data.explanation}`);
-
-                // TODO: Show nice result Modal/Card instead of Alert
+                // Redirecting to the Detail page as requested for better UX
+                window.location.href = '/analysis_detail';
             } catch (err) {
                 alert("Error connecting to server.");
-            } finally {
                 btn.innerHTML = originalContent;
                 btn.disabled = false;
             }

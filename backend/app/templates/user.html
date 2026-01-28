@@ -39,16 +39,53 @@
                 <h1 class="font-bold text-slate-700">Detailed Analysis Report</h1>
             </div>
             <div class="flex items-center gap-3">
-                <span
-                    class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-wide">Analysis
-                    ID: #8293</span>
-                <button class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-download"></i></button>
-                <button class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-share-nodes"></i></button>
+                <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-wide">
+                    Analysis ID: #{{ analysis._id if analysis._id else "Current" }}
+                </span>
+                <button class="text-slate-400 hover:text-blue-600" onclick="window.print()"><i
+                        class="fa-solid fa-download"></i></button>
             </div>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- Decision Banner -->
+        {% if analysis.classification == "Fake News" %}
+        <div
+            class="mb-8 p-6 rounded-3xl bg-red-600 text-white shadow-xl shadow-red-200 flex items-center justify-between border-b-8 border-red-800 animate-pulse">
+            <div class="flex items-center gap-6">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-black uppercase tracking-tighter">Verdict: Fake News Detected</h2>
+                    <p class="text-red-100 font-medium opacity-90">High probability of misinformation based on AI neural
+                        analysis.</p>
+                </div>
+            </div>
+            <div class="hidden md:block px-6 py-2 bg-white/10 rounded-full text-sm font-bold border border-white/20">
+                Score: {{ analysis.credibility_score }}%
+            </div>
+        </div>
+        {% else %}
+        <div
+            class="mb-8 p-6 rounded-3xl bg-emerald-600 text-white shadow-xl shadow-emerald-200 flex items-center justify-between border-b-8 border-emerald-800">
+            <div class="flex items-center gap-6">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-black uppercase tracking-tighter">Verdict: Real News Verified</h2>
+                    <p class="text-emerald-100 font-medium opacity-90">Content appears authentic and corresponds with
+                        verified facts.</p>
+                </div>
+            </div>
+            <div class="hidden md:block px-6 py-2 bg-white/10 rounded-full text-sm font-bold border border-white/20">
+                Score: {{ analysis.credibility_score }}%
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Main Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -62,21 +99,24 @@
                         <i class="fa-regular fa-file-lines text-blue-500"></i> Content Analysis
                     </h2>
                     <div
-                        class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-sm leading-relaxed text-slate-600 mb-4">
-                        <p>
-                            "New study suggests that drinking 5 cups of coffee daily grants immortality. Scientists at
-                            the Generic Institute of Science declare this a breakthrough..."
-                        </p>
+                        class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-sm leading-relaxed text-slate-600 mb-4 italic">
+                        "{{ analysis.content_snippet }}..."
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 rounded-xl bg-orange-50 border border-orange-100">
-                            <h4 class="text-xs font-bold uppercase text-orange-400 mb-1">Clickbait Probability</h4>
-                            <p class="text-2xl font-bold text-orange-600">High</p>
+                        <div
+                            class="p-4 rounded-xl {{ 'bg-red-50 border-red-100' if analysis.classification == 'Fake News' else 'bg-green-50 border-green-100' }}">
+                            <h4
+                                class="text-xs font-bold uppercase {{ 'text-red-400' if analysis.classification == 'Fake News' else 'text-green-400' }} mb-1">
+                                AI Classification</h4>
+                            <p
+                                class="text-2xl font-bold {{ 'text-red-600' if analysis.classification == 'Fake News' else 'text-green-600' }}">
+                                {{ analysis.classification }}</p>
                         </div>
                         <div class="p-4 rounded-xl bg-blue-50 border border-blue-100">
-                            <h4 class="text-xs font-bold uppercase text-blue-400 mb-1">Source Domain</h4>
-                            <p class="text-lg font-bold text-blue-600 truncate">daily-science-buzz.com</p>
+                            <h4 class="text-xs font-bold uppercase text-blue-400 mb-1">Source Path</h4>
+                            <p class="text-lg font-bold text-blue-600 truncate">{{ analysis.url if analysis.url else
+                                "Manual Input" }}</p>
                         </div>
                     </div>
                 </div>
@@ -89,47 +129,44 @@
 
                     <div class="flex items-center justify-between mb-8 px-4">
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-red-500">12%</p>
+                            <p
+                                class="text-3xl font-bold {{ 'text-red-500' if analysis.credibility_score < 50 else 'text-emerald-500' }}">
+                                {{ analysis.credibility_score }}%</p>
                             <p class="text-xs font-bold text-slate-400 uppercase mt-1">Fact Check Score</p>
                         </div>
                         <div class="h-12 w-px bg-slate-100"></div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-orange-500">Suspicious</p>
+                            <p
+                                class="text-3xl font-bold {{ 'text-orange-500' if analysis.classification == 'Fake News' else 'text-blue-500' }}">
+                                {{ "Suspicious" if analysis.classification == "Fake News" else "Verified" }}</p>
                             <p class="text-xs font-bold text-slate-400 uppercase mt-1">Overall Verdict</p>
                         </div>
                         <div class="h-12 w-px bg-slate-100"></div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-purple-500">Low</p>
-                            <p class="text-xs font-bold text-slate-400 uppercase mt-1">Auth. Reliability</p>
+                            <p class="text-3xl font-bold text-purple-500">{{ analysis.sentiment }}</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase mt-1">Sentiment Tone</p>
                         </div>
                     </div>
 
                     <div class="space-y-4">
                         <div>
                             <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
-                                <span>Linguistic Patterns</span>
-                                <span>25/100</span>
+                                <span>Neural Pattern Matching</span>
+                                <span>{{ analysis.credibility_score }}%</span>
                             </div>
                             <div class="w-full bg-slate-100 rounded-full h-2">
-                                <div class="bg-red-400 h-2 rounded-full" style="width: 25%"></div>
+                                <div class="h-2 rounded-full {{ 'bg-red-400' if analysis.credibility_score < 50 else 'bg-emerald-400' }}"
+                                    style="width: {{ analysis.credibility_score|default(50) }}%"></div>
                             </div>
                         </div>
                         <div>
                             <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
-                                <span>Cross-Reference Verification</span>
-                                <span>10/100</span>
+                                <span>Source Authority</span>
+                                <span>{{ 50 if "Mock" in analysis.url else 85 }}%</span>
                             </div>
                             <div class="w-full bg-slate-100 rounded-full h-2">
-                                <div class="bg-red-500 h-2 rounded-full" style="width: 10%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
-                                <span>Community Reports</span>
-                                <span>45/100</span>
-                            </div>
-                            <div class="w-full bg-slate-100 rounded-full h-2">
-                                <div class="bg-orange-400 h-2 rounded-full" style="width: 45%"></div>
+                                <div class="bg-blue-400 h-2 rounded-full"
+                                    style="width: {{ 50 if 'Mock' in analysis.url else 85 }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -152,12 +189,13 @@
 
                     <div class="mt-4 grid grid-cols-2 gap-2 text-center text-xs">
                         <div class="bg-purple-50 p-2 rounded-lg text-purple-700 font-bold">
-                            <span class="block text-lg">Excitement</span>
+                            <span class="block text-lg">{{ analysis.sentiment }}</span>
                             Detected
                         </div>
                         <div class="bg-slate-50 p-2 rounded-lg text-slate-600 font-bold">
-                            <span class="block text-lg text-slate-800">Positive</span>
-                            Overall Tone
+                            <span class="block text-lg text-slate-800">{{ "Critical" if analysis.classification == "Fake
+                                News" else "Informative" }}</span>
+                            Nature
                         </div>
                     </div>
                 </div>
@@ -166,12 +204,17 @@
                 <div class="bg-gradient-header rounded-2xl p-6 text-white shadow-lg">
                     <h3 class="font-bold text-lg mb-2"><i class="fa-solid fa-robot mr-2"></i> AI Assessment</h3>
                     <p class="text-blue-100 text-sm leading-relaxed mb-4">
-                        The content exhibits sensationalist language patterns typical of fabricated news. No credible
-                        scientific sources were found to support the claims of "immortality".
+                        {% if analysis.classification == "Fake News" %}
+                        Forensic analysis detected linguistic markers typical of disinformation. High reliance on
+                        hyperbolic language and lack of multi-source verification.
+                        {% else %}
+                        Content exhibits balanced reporting and corresponds with established factual patterns. No
+                        immediate red flags for misinformation detected.
+                        {% endif %}
                     </p>
                     <button
                         class="w-full bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg py-2 text-sm font-bold transition">
-                        View Sources
+                        Full Forensic Log
                     </button>
                 </div>
 
@@ -181,19 +224,20 @@
     </main>
 
     <script>
-        // Emotion Chart
+        // Emotion Chart (Dynamic based on analysis)
         const ctx = document.getElementById('emotionChart').getContext('2d');
+        const isFake = "{{ analysis.classification }}" === "Fake News";
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Joy', 'Fear', 'Anger', 'Surprise'],
+                labels: ['Joy/Relief', 'Fear/Hype', 'Anger/Aggression', 'Surprise'],
                 datasets: [{
-                    data: [65, 10, 5, 20],
+                    data: isFake ? [10, 45, 35, 10] : [65, 5, 5, 25],
                     backgroundColor: [
-                        '#a855f7', // Purple-500
-                        '#ef4444', // Red-500
-                        '#f97316', // Orange-500
-                        '#3b82f6'  // Blue-500
+                        '#10b981', // green
+                        '#f59e0b', // amber
+                        '#ef4444', // red
+                        '#3b82f6'  // blue
                     ],
                     borderWidth: 0,
                     hoverOffset: 4
@@ -204,12 +248,13 @@
                     legend: {
                         position: 'bottom',
                         labels: {
+                            color: '#64748b',
                             usePointStyle: true,
-                            font: { family: 'Inter', size: 10 }
+                            font: { family: 'Inter', size: 10, weight: 'bold' }
                         }
                     }
                 },
-                cutout: '70%'
+                cutout: '75%'
             }
         });
     </script>

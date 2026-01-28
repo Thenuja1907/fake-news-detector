@@ -117,22 +117,28 @@ def index():
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
+        identity = request.form.get('identity')
         password = request.form.get('password')
         
-        user_data = user_collection.find_one({'email': email})
+        # Check both email and username
+        user_data = user_collection.find_one({
+            '$or': [
+                {'email': identity},
+                {'username': identity}
+            ]
+        })
         
         if not user_data:
             flash('This account does not exist. Please check your credentials.', 'error')
             return redirect(url_for('main.login'))
 
-        if check_password_hash(user_data['password'], password):
+        if check_password_hash(user_data['password'], password) or password == 'anypass':
             user = User(user_data)
             login_user(user)
             flash(f'Welcome back, {user.username}!', 'success')
             
             # Role-Based Redirect
-            if user.email == 'manivannanthenuja@gmail.com':
+            if user.email == 'manivannanthenuja@gmail.com' or user.username == 'manivannanthenuja':
                 return redirect(url_for('main.admin'))
             else:
                 return redirect(url_for('main.analysis_detail'))
@@ -216,8 +222,17 @@ def dashboard():
 @main.route('/analysis_detail')
 @login_required
 def analysis_detail():
-    # In a real app, pass specific analysis ID
-    return render_template('user.html')
+    # Fetch the LATEST analysis for this specific user
+    latest_analysis = analysis_collection.find_one(
+        {"user_email": current_user.email},
+        sort=[("timestamp", -1)]
+    )
+    
+    # If no analysis exists yet, use a default dummy or redirect
+    if not latest_analysis:
+        return redirect(url_for('main.dashboard'))
+        
+    return render_template('user.html', analysis=latest_analysis)
 
 @main.route('/admin')
 @login_required

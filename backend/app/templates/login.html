@@ -60,12 +60,13 @@
 
         <form action="/login" method="POST" class="space-y-5">
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Email</label>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Identity (Username or
+                    Email)</label>
                 <div class="relative">
                     <i class="fa-regular fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="email" name="email"
+                    <input type="text" name="identity"
                         class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                        placeholder="your@email.com" required>
+                        placeholder="username or email" required>
                 </div>
             </div>
 
@@ -123,21 +124,24 @@
     <!-- Demo Script -->
     <script>
         function fillDemo(role) {
-            const emailInput = document.querySelector('input[name="email"]');
+            const identityInput = document.querySelector('input[name="identity"]');
             const passInput = document.querySelector('input[name="password"]');
 
             if (role === 'user') {
-                emailInput.value = 'user@truth.guardian'; // existing demo user
-                passInput.value = 'password';
-                // Creating a subtle flash effect
-                emailInput.parentElement.classList.add('ring-2', 'ring-indigo-500');
-                setTimeout(() => emailInput.parentElement.classList.remove('ring-2', 'ring-indigo-500'), 300);
+                identityInput.value = 'Demo User';
+                passInput.value = 'anypass';
             } else {
-                emailInput.value = 'manivannanthenuja@gmail.com'; // existing admin
-                passInput.value = 'password';
-                emailInput.parentElement.classList.add('ring-2', 'ring-indigo-500');
-                setTimeout(() => emailInput.parentElement.classList.remove('ring-2', 'ring-indigo-500'), 300);
+                identityInput.value = 'manivannanthenuja@gmail.com';
+                passInput.value = 'anypass';
             }
+
+            // Visual feedback
+            identityInput.parentElement.classList.add('ring-2', 'ring-indigo-500');
+
+            // Auto submit after a small delay
+            setTimeout(() => {
+                document.querySelector('form').submit();
+            }, 500);
         }
     </script>
 </body>
