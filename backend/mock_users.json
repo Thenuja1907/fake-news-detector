@@ -22,5 +22,23 @@
         "email": "jane@example.com",
         "password": "scrypt:32768:8:1$RhNvzhExiPE11WJL$b890695d1c0fcf861202214f3d16e654605cc0c28fd6b2932e85bdab895a0ff31e6b37de9c09b23df60503ef3b44d0bb6ffe60ea58ad6fde7ed2c88f8069a717",
         "_id": "6ae7fdb71bd3bba8b4a541d0"
+    },
+    {
+        "username": "thenuja",
+        "email": "thenuja@mail.com",
+        "password": "scrypt:32768:8:1$54RtzZuAwOpAIanj$3d63c0679ed3097ace97500da7ed986fa1fd027c7695f74505f187de3ddf7ad884c0287d09769254f845720d31d5da8867ae937c89a9fdf85b3783dc41af423a",
+        "created_at": "2026-01-28T23:29:47.579756",
+        "_id": "d8abf97562d4535153e0747f",
+        "last_login": "2026-01-28T23:29:47.582190",
+        "status": "Active"
+    },
+    {
+        "username": "thenuja",
+        "email": "thenuja@mail.co",
+        "password": "scrypt:32768:8:1$i2AZTbi6Kap8gvU2$6acf884dc3012a234aa27d2cfba8eb3fc84a9a0b2a73d8469d515fec517bb66e27b4f5b07b0aaff58630397468c56eb291a5795e35d186a2bf661ff6fff1bd92",
+        "created_at": "2026-01-28T23:30:16.772596",
+        "_id": "f08510ff2a30f156190e85a8",
+        "last_login": "2026-01-28T23:30:16.774757",
+        "status": "Active"
     }
 ]
