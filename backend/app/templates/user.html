@@ -68,7 +68,7 @@
                 Score: {{ analysis.credibility_score }}%
             </div>
         </div>
-        {% else %}
+        {% elif analysis.classification == "Real News" %}
         <div
             class="mb-8 p-6 rounded-3xl bg-emerald-600 text-white shadow-xl shadow-emerald-200 flex items-center justify-between border-b-8 border-emerald-800">
             <div class="flex items-center gap-6">
@@ -79,6 +79,24 @@
                     <h2 class="text-3xl font-black uppercase tracking-tighter">Verdict: Real News Verified</h2>
                     <p class="text-emerald-100 font-medium opacity-90">Content appears authentic and corresponds with
                         verified facts.</p>
+                </div>
+            </div>
+            <div class="hidden md:block px-6 py-2 bg-white/10 rounded-full text-sm font-bold border border-white/20">
+                Score: {{ analysis.credibility_score }}%
+            </div>
+        </div>
+        {% else %}
+        <div
+            class="mb-8 p-6 rounded-3xl bg-slate-600 text-white shadow-xl shadow-slate-200 flex items-center justify-between border-b-8 border-slate-800">
+            <div class="flex items-center gap-6">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-circle-nodes"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-black uppercase tracking-tighter">Verdict: {{ analysis.classification }}
+                    </h2>
+                    <p class="text-slate-100 font-medium opacity-90">The system could not definitively classify this
+                        content. Please provide more text.</p>
                 </div>
             </div>
             <div class="hidden md:block px-6 py-2 bg-white/10 rounded-full text-sm font-bold border border-white/20">
@@ -209,9 +227,12 @@
                         {% if analysis.classification == "Fake News" %}
                         Forensic analysis detected linguistic markers typical of disinformation. High reliance on
                         hyperbolic language and lack of multi-source verification.
-                        {% else %}
+                        {% elif analysis.classification == "Real News" %}
                         Content exhibits balanced reporting and corresponds with established factual patterns. No
                         immediate red flags for misinformation detected.
+                        {% else %}
+                        Insufficient text content for a deep neural assessment. Please paste the full article text in
+                        the 'Analyze' section for a complete forensic report.
                         {% endif %}
                     </p>
                     <button

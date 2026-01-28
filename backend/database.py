@@ -115,7 +115,8 @@ except Exception as e:
     ])
     source_collection = MockCollection([
         {"name": "BBC News", "url": "bbc.com", "rating": "Verified Trusted"},
-        {"name": "Reuters", "url": "reuters.com", "rating": "Verified Trusted"}
+        {"name": "Reuters", "url": "reuters.com", "rating": "Verified Trusted"},
+        {"name": "Fake News Network", "url": "fake-news-website.com", "rating": "Unreliable"}
     ])
     user_collection = MockCollection(mock_users)
 
