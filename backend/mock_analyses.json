@@ -1,1 +1,12 @@
-[{"_id": "00000000000000000000000c", "user_email": "user@demo.com", "content_snippet": "New study suggests that drinking 5 cups of coffee daily grants immortality.", "url": "https://daily-science-buzz.com/immortality-coffee", "classification": "Fake News", "credibility_score": 12.5, "sentiment": "Excitement", "timestamp": "2026-01-28T20:30:49.475524"}]
+[
+    {
+        "_id": "00000000000000000000000c",
+        "user_email": "user@demo.com",
+        "content_snippet": "New study suggests that drinking 5 cups of coffee daily grants immortality.",
+        "url": "https://daily-science-buzz.com/immortality-coffee",
+        "classification": "Fake News",
+        "credibility_score": 12.5,
+        "sentiment": "Excitement",
+        "timestamp": "2026-01-28T20:30:49.475524"
+    }
+]

@@ -23,16 +23,29 @@ import os
 class MockCollection:
     def __init__(self, data=None, collection_name="default"):
         import secrets
-        self.filename = f"mock_{collection_name}.json"
+        # Use absolute path to ensure persistence in the correct directory
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.filename = os.path.join(base_dir, f"mock_{collection_name}.json")
+        print(f"DEBUG: Initializing MockCollection {collection_name} at {self.filename}")
         
-        # Try to load existing data
+        self.data = []
         if os.path.exists(self.filename):
             try:
                 with open(self.filename, 'r') as f:
-                    self.data = json.load(f)
-            except:
+                    loaded_data = json.load(f)
+                    # Convert ISO strings back to datetime objects
+                    for doc in loaded_data:
+                        if 'timestamp' in doc and isinstance(doc['timestamp'], str):
+                            try:
+                                doc['timestamp'] = datetime.datetime.fromisoformat(doc['timestamp'])
+                            except: pass
+                    self.data = loaded_data
+                print(f"DEBUG: Loaded {len(self.data)} records for {collection_name}")
+            except Exception as e:
+                print(f"DEBUG Error loading mock {collection_name}: {e}")
                 self.data = data or []
         else:
+            print(f"DEBUG: No existing file for {collection_name}, using default data")
             self.data = data or []
             
         for doc in self.data:
@@ -43,16 +56,16 @@ class MockCollection:
 
     def _save(self):
         try:
-            # Handle non-serializable objects (like datetime)
             def default_serializer(obj):
                 if isinstance(obj, datetime.datetime):
                     return obj.isoformat()
                 return str(obj)
             
             with open(self.filename, 'w') as f:
-                json.dump(self.data, f, default=default_serializer)
-        except:
-            pass
+                json.dump(self.data, f, default=default_serializer, indent=4)
+            print(f"DEBUG: Saved {len(self.data)} records to {self.filename}")
+        except Exception as e:
+            print(f"DEBUG Error saving mock {self.filename}: {e}")
 
     def find_one(self, query, sort=None):
         # Handle $or separately

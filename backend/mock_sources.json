@@ -1,1 +1,62 @@
-[{"name": "BBC News", "url": "bbc.com", "rating": "Verified Trusted", "_id": "3eca649435d26c40073fa8f2"}, {"name": "Reuters", "url": "reuters.com", "rating": "Verified Trusted", "_id": "6823b7dabec903f91d6bfb6e"}, {"name": "Associated Press", "url": "apnews.com", "rating": "Verified Trusted", "_id": "db72c20e1cc5ac75b31cbee3"}, {"name": "The New York Times", "url": "nytimes.com", "rating": "Verified Trusted", "_id": "c85dfd8ae81a9b91abc1b7c8"}, {"name": "The Guardian", "url": "theguardian.com", "rating": "Verified Trusted", "_id": "6bfe31f699d667a86d27dc74"}, {"name": "HealthLine Verified", "url": "healthline.com", "rating": "Highly Reliable", "_id": "06adcb25a5a6242231ca0ba2"}, {"name": "Fake News Network", "url": "fake-news-website.com", "rating": "Unreliable", "_id": "08dab23a0438f6b042c92292"}, {"name": "Conspiracy Blog", "url": "conspiracy-blog.com", "rating": "Unreliable", "_id": "49b9312e7ebddabbef8cd2be"}, {"name": "Fake News Blog", "url": "fake-news-blog.com", "rating": "Unreliable", "_id": "2a3c9a445645c958302d79c0"}, {"name": "Misinfo Today", "url": "misinfo-today.org", "rating": "Unreliable", "_id": "565942f0e1d78207a7a599ee"}]
+[
+    {
+        "name": "BBC News",
+        "url": "bbc.com",
+        "rating": "Verified Trusted",
+        "_id": "3eca649435d26c40073fa8f2"
+    },
+    {
+        "name": "Reuters",
+        "url": "reuters.com",
+        "rating": "Verified Trusted",
+        "_id": "6823b7dabec903f91d6bfb6e"
+    },
+    {
+        "name": "Associated Press",
+        "url": "apnews.com",
+        "rating": "Verified Trusted",
+        "_id": "db72c20e1cc5ac75b31cbee3"
+    },
+    {
+        "name": "The New York Times",
+        "url": "nytimes.com",
+        "rating": "Verified Trusted",
+        "_id": "c85dfd8ae81a9b91abc1b7c8"
+    },
+    {
+        "name": "The Guardian",
+        "url": "theguardian.com",
+        "rating": "Verified Trusted",
+        "_id": "6bfe31f699d667a86d27dc74"
+    },
+    {
+        "name": "HealthLine Verified",
+        "url": "healthline.com",
+        "rating": "Highly Reliable",
+        "_id": "06adcb25a5a6242231ca0ba2"
+    },
+    {
+        "name": "Fake News Network",
+        "url": "fake-news-website.com",
+        "rating": "Unreliable",
+        "_id": "08dab23a0438f6b042c92292"
+    },
+    {
+        "name": "Conspiracy Blog",
+        "url": "conspiracy-blog.com",
+        "rating": "Unreliable",
+        "_id": "49b9312e7ebddabbef8cd2be"
+    },
+    {
+        "name": "Fake News Blog",
+        "url": "fake-news-blog.com",
+        "rating": "Unreliable",
+        "_id": "2a3c9a445645c958302d79c0"
+    },
+    {
+        "name": "Misinfo Today",
+        "url": "misinfo-today.org",
+        "rating": "Unreliable",
+        "_id": "565942f0e1d78207a7a599ee"
+    }
+]
