@@ -139,6 +139,59 @@
             </div>
         </div>
 
+        {% if is_admin %}
+        <!-- Global Platform Insights (Visible to Admins) -->
+        <div class="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div class="flex items-center gap-2 mb-6">
+                <div class="w-8 h-px bg-slate-200"></div>
+                <h2 class="text-xs font-black uppercase tracking-widest text-slate-400">Global Administration Insights
+                </h2>
+                <div class="flex-1 h-px bg-slate-200"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Total Users -->
+                <div
+                    class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative hover:border-purple-200 transition-colors">
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="font-bold text-slate-800">Registered Users</h4>
+                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-4xl font-bold text-slate-800 mb-1">105</h3>
+                    <p class="text-xs text-slate-400">Across the platform</p>
+                </div>
+
+                <!-- Global Analyses -->
+                <div
+                    class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative hover:border-blue-200 transition-colors">
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="font-bold text-slate-800">Global Analyses</h4>
+                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-4xl font-bold text-slate-800 mb-1">{{ stats.total }}</h3>
+                    <p class="text-xs text-slate-400">Real-time processing</p>
+                </div>
+
+                <!-- System Accuracy -->
+                <div
+                    class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative hover:border-green-200 transition-colors">
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="font-bold text-slate-800">System Accuracy</h4>
+                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-4xl font-bold text-emerald-500 mb-1">{{ stats.accuracy }}%</h3>
+                    <p class="text-xs text-slate-400">AI confidence score</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Navigation Bar -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-2 mb-8 flex items-center justify-between">
             <div class="flex gap-2">
