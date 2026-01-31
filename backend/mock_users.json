@@ -4,7 +4,7 @@
         "email": "manivannanthenuja@gmail.com",
         "password": "scrypt:32768:8:1$z5eni4c0QwZ54cAG$2e6db20a319009211760c8aaa6879cb8be3ce6c31a67bc93f3742db3a276b7d3a38bc3d2f0ddf3f570515ce826656f7354f88da6e87e37fff4853f8a28f3371c",
         "_id": "552b54fa908fd7e765250c97",
-        "last_login": "2026-01-28T23:57:25.415184",
+        "last_login": "2026-01-31T09:54:35.489033",
         "status": "Active",
         "scan_count": 13
     },
@@ -13,7 +13,9 @@
         "email": "user@demo.com",
         "password": "scrypt:32768:8:1$oGg5cAUzLgU4ZYm8$0d768c6397676dd0278e3c8a04105fa52a4e2b16ff3d5e4448eb4fb00edfdb8d8ccc2bd12b8eb6e846877e8f3f549fe2130f6f7a9f0c2516ae2bf4aa2939fd5f",
         "_id": "82fa0fc35c474a233014e87f",
-        "scan_count": 1
+        "scan_count": 1,
+        "last_login": "2026-01-31T10:04:51.867299",
+        "status": "Active"
     },
     {
         "username": "John Doe",
@@ -35,21 +37,31 @@
         "password": "scrypt:32768:8:1$XzhxQvNcglA5FXE5$57f2b331a2671e7b90605f4301f1a1decf36ed4d034800c23e46f1daaec1a5351ea3adccb267d784c862ab06f7462ec14e0fb11fd5dc8100ef09cef740ff4253",
         "created_at": "2026-01-28T23:58:59.180577",
         "_id": "edc322feb917e2cc67ee1b23",
-        "last_login": "2026-01-29T00:12:50.212937",
-        "status": "Active"
+        "last_login": "2026-01-31T10:07:21.098417",
+        "status": "Active",
+        "scan_count": 5
     },
     {
         "username": "Prathi",
         "email": "prathi@mail.com",
         "password": "scrypt:32768:8:1$5nihgJq9yhELP6GU$8fe3e15af78bff3916ca219560a2b343db29211a18be0ea4d9d9d42c283a79c8f54f8291e02b1a93a2f68199b6b3d1c7d4697785e8728c7800d79f931ecae81e",
         "created_at": "2026-01-29T00:10:52.887971",
-        "_id": "41420d459f4111d6fda8cc63"
+        "_id": "41420d459f4111d6fda8cc63",
+        "scan_count": 0
     },
     {
         "username": "Prathisha",
         "email": "prathisha@mail.com",
         "password": "scrypt:32768:8:1$IbYar1fIU0GLyC9f$6e6d7f82acf9c9c9d4d8560f28da32764123b4e11c7e8dc11890456b0c5c267bc3f62abec0542597c9aa2b05613550c0d8926ab0f8a91b49677275844de6a9c8",
         "created_at": "2026-01-29T00:14:03.996756",
-        "_id": "4d1bc34e9d1a7b0d6f643158"
+        "_id": "4d1bc34e9d1a7b0d6f643158",
+        "scan_count": 0
+    },
+    {
+        "username": "John",
+        "email": "john@tech.com",
+        "password": "scrypt:32768:8:1$YJ0BqCY2vvj7swiH$2e53680dae60ca1ca8d41e719d0dd1fc7b3b1a2452fd1d0a74de8cc747fbc45bc461401ac126990070f82ddc47ee9cf6614cfa56d1d3887f48380a4eeebd15cf",
+        "created_at": "2026-01-31T09:56:48.393312",
+        "_id": "d6ce099c92eb46595afe7e51"
     }
 ]

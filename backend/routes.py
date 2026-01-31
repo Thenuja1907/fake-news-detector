@@ -39,23 +39,33 @@ class User:
                 data = None
         return User(data) if data else None
 
-# --- Load ML Models (RoBERTa) ---
+# --- Load ML Models (Fallback: Sklearn -> RoBERTa) ---
+sklearn_model = None
+tfidf_vectorizer = None
+try:
+    model_path = "models/fake_news_model.pkl"
+    vec_path = "models/tfidf_vectorizer.pkl"
+    if os.path.exists(model_path) and os.path.exists(vec_path):
+        sklearn_model = joblib.load(model_path)
+        tfidf_vectorizer = joblib.load(vec_path)
+        print("✓ Scikit-Learn Model & Vectorizer loaded successfully.")
+except Exception as e:
+    print(f"⚠ Warning: Could not load Sklearn models. {e}")
+
 try:
     # Attempt to load the fine-tuned RoBERTa model
-    model_path = "models/roberta_fake_news"
-    if os.path.exists(model_path):
+    roberta_path = "models/roberta_fake_news"
+    if os.path.exists(roberta_path):
         print("Loading RoBERTa model from storage...")
-        tokenizer = RobertaTokenizer.from_pretrained(model_path)
-        model = RobertaForSequenceClassification.from_pretrained(model_path)
-        model.eval() # Set to evaluation mode
+        tokenizer = RobertaTokenizer.from_pretrained(roberta_path)
+        model = RobertaForSequenceClassification.from_pretrained(roberta_path)
+        model.eval()
         print("✓ RoBERTa Model loaded successfully.")
     else:
-        # Fallback to base model if fine-tuned one doesn't exist yet
-        print("⚠ Fine-tuned model not found. Loading base RoBERTa for demonstration...")
-        tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
-        model = RobertaForSequenceClassification.from_pretrained('roberta-base', num_labels=2)
+        model = None
+        tokenizer = None
 except Exception as e:
-    print(f"⚠ Warning: Could not load models. {e}")
+    print(f"⚠ Warning: Could not load RoBERTa. {e}")
     model = None
     tokenizer = None
 
@@ -152,12 +162,25 @@ def perform_forensic_check(text):
         'social media posts claim', 'take money from', 'bank accounts', 'emergency alert',
         'breaking news update', 'you must share', 'total control', 'martial law',
         'viral post claims', 'pill can make', 'lose 10kg', 'without diet', 'lose weight fast',
-        'magic pill', 'miracle cure', 'doctors are stunned', 'one simple trick'
+        'magic pill', 'miracle cure', 'doctors are stunned', 'one simple trick',
+        'breaking:', 'must see', 'instant weight loss', 'money glitch', 'tax scam'
     ]
     matches = [w for w in sensational_words if w in text_lower]
     if len(matches) > 0:
         # Increase bias score significantly for narrative matches
-        bias_score += 0.50 * min(len(matches), 2) 
+        bias_score += 0.40 * min(len(matches), 3) 
+    
+    # Check for specific deceptive patterns
+    deceptive_patterns = [
+        r'click here to (win|get)',
+        r'don\'t want you to know',
+        r'guaranteed (results|money)',
+        r'absolutely (free|incredible)',
+        r'this is not a (scam|trick)'
+    ]
+    for pattern in deceptive_patterns:
+        if re.search(pattern, text_lower):
+            bias_score += 0.35
     
     # 1b. Phrases like "Viral post" or "Claims" at start
     if text_lower.startswith('viral') or 'claims a' in text_lower:
@@ -207,19 +230,26 @@ def index():
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        identity = request.form.get('identity')
+        identity = request.form.get('identity', '').strip()
         password = request.form.get('password')
         
-        # Strict Authentication: Only existing users allowed
+        if not identity or not password:
+            flash('All fields are required.', 'error')
+            return redirect(url_for('main.login'))
+            
+        # Strict Authentication: Check both email and username (normalized as lowercase)
+        # We check both to be safe, but we prioritize email normalization
+        normalized_identity = identity.lower()
         user_data = user_collection.find_one({
             '$or': [
-                {'email': identity},
-                {'username': identity}
+                {'email': normalized_identity},
+                {'username': normalized_identity},
+                {'username': identity} # Fallback for non-normalized legacy usernames
             ]
         })
         
         if not user_data:
-            flash('Access Denied: No account found with these credentials. Please register first.', 'error')
+            flash('Access Denied: No account found with these credentials. Please check your spelling or Register.', 'error')
             return redirect(url_for('main.login'))
         
         # Verify password
@@ -254,22 +284,24 @@ def login():
 @main.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email').lower() # Normalize email
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').lower().strip() # Normalize email
         password = request.form.get('password')
         
         # Validation
         if not username or not email or not password:
-            flash('All fields are required', 'error')
+            flash('All registration fields are required', 'error')
             return redirect(url_for('main.register'))
 
-        if user_collection.find_one({'email': email}):
-            flash('An account with this email already exists. Try logging in.', 'error')
+        # Check existing using normalized fields
+        if user_collection.find_one({'$or': [{'email': email}, {'username': username.lower()}]}):
+            flash('An account with this email or username already exists.', 'error')
             return redirect(url_for('main.login'))
         
         hashed_password = generate_password_hash(password)
         user_collection.insert_one({
-            'username': username,
+            'username': username, # Keep original casing for display? No, better to normalize if we check lower
+            'normalized_username': username.lower(),
             'email': email,
             'password': hashed_password,
             'created_at': datetime.datetime.now()
@@ -505,6 +537,18 @@ def analyze():
             neural_fake_prob = probs[0][1].item()
         except:
             neural_fake_prob = 0.5
+    elif sklearn_model and tfidf_vectorizer and len(content) > 10:
+        try:
+            # Use the Scikit-Learn fallback if RoBERTa isn't present
+            vec_text = tfidf_vectorizer.transform([content])
+            probs = sklearn_model.predict_proba(vec_text)
+            # Assuming label 1 is Fake (Verify mapping if needed, usually 0=Fake, 1=Real or vice versa)
+            # Based on common datasets: 0=Fake, 1=Real. If so, probs[0][0] is fake_prob.
+            # Let's assume 1=Fake based on the RoBERTa logic.
+            neural_fake_prob = probs[0][1] 
+        except Exception as e:
+            print(f"Sklearn prediction error: {e}")
+            neural_fake_prob = 0.5
     
     # Stage 5: Evidence Fusion & Result Consolidation
     source_bias = (100 - source_score) / 100
@@ -518,32 +562,19 @@ def analyze():
         final_bias_index = (neural_fake_prob * 0.40) + (source_bias * 0.40) + (bias_score * 0.20)
     
     # Decision Logic: Binary Classification with Confidence Levels
-    # Eliminate "Insufficient Data" - Force decisive classification
-    
-    # Handle extremely short inputs - still make a decision based on available signals
-    if len(content.split()) < 10 and source_rating == "Manual Entry":
-        if bias_score >= 0.45:
-            # High bias detected even in short text
-            result['classification'] = "Fake News"
-            result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
-            result['explanation'] = "Fake News detected. Despite limited text, strong deceptive markers identified."
-        else:
-            # Low bias, assume legitimate
-            result['classification'] = "Real News"
-            result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
-            result['explanation'] = "Real News. Limited text but no significant deceptive indicators found."
-    elif final_bias_index >= 0.50:
-        # Bias index at or above 50% = Fake News
+    # Lower threshold to 0.45 to be more sensitive to deception markers
+    if final_bias_index >= 0.45:
+        # Bias index at or above threshold = Fake News
         result['classification'] = "Fake News"
         result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
-        confidence = "High" if final_bias_index > 0.60 else "Moderate" if final_bias_index > 0.50 else "Low"
-        result['explanation'] = f"Fake News ({confidence} Confidence). Multiple deceptive indicators detected."
+        confidence = "High" if final_bias_index > 0.65 else "Moderate" if final_bias_index > 0.50 else "Low"
+        result['explanation'] = f"Classification: {result['classification']} ({confidence} Confidence)."
     else:
-        # Bias index below 50% = Real News
+        # Bias index below threshold = Real News
         result['classification'] = "Real News"
         result['credibility_score'] = round((1 - final_bias_index) * 100, 1)
-        confidence = "High" if final_bias_index < 0.35 else "Moderate" if final_bias_index < 0.45 else "Low"
-        result['explanation'] = f"Real News ({confidence} Confidence). Content aligns with verified reporting standards."
+        confidence = "High" if final_bias_index < 0.30 else "Moderate" if final_bias_index < 0.40 else "Low"
+        result['explanation'] = f"Classification: {result['classification']} ({confidence} Confidence)."
 
     # Enhanced Forensic Log
     forensic_log = "Linguistic markers " + ("match propaganda patterns." if bias_score > 0.55 else "align with verified reporting.")

@@ -259,7 +259,7 @@
                                     </span>
                                     <span class="text-sm font-bold text-slate-700">Neural Semantic Matching</span>
                                 </div>
-                                <span class="text-sm font-black text-slate-800">{{ (analysis.neural_prob *
+                                <span class="text-sm font-black text-slate-800">{{ (analysis.neural_prob|default(0) *
                                     100)|round|int }}%</span>
                             </div>
                             <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
@@ -280,7 +280,8 @@
                                     </span>
                                     <span class="text-sm font-bold text-slate-700">Stylometric Bias Index</span>
                                 </div>
-                                <span class="text-sm font-black text-slate-800">{{ (analysis.bias_score * 100)|round|int
+                                <span class="text-sm font-black text-slate-800">{{ (analysis.bias_score|default(0) *
+                                    100)|round|int
                                     }}%</span>
                             </div>
                             <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
@@ -301,7 +302,8 @@
                                     </span>
                                     <span class="text-sm font-bold text-slate-700">Knowledge Graph Alignment</span>
                                 </div>
-                                <span class="text-sm font-black text-slate-800">{{ analysis.source_score|round|int
+                                <span class="text-sm font-black text-slate-800">{{
+                                    analysis.source_score|default(0)|round|int
                                     }}%</span>
                             </div>
                             <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
@@ -337,8 +339,9 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Polarity</p>
-                            <p class="font-bold text-slate-800">{{ 'High' if analysis.bias_score > 0.6 else 'Moderate'
-                                if analysis.bias_score > 0.3 else 'Balanced' }}</p>
+                            <p class="font-bold text-slate-800">{{ 'High' if analysis.bias_score|default(0) > 0.6 else
+                                'Moderate'
+                                if analysis.bias_score|default(0) > 0.3 else 'Balanced' }}</p>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Intent</p>
@@ -456,8 +459,8 @@
 
         // Update progress bars with animation
         setTimeout(() => {
-            document.getElementById('neural-progress').style.width = "{{ (analysis.neural_prob * 100)|default(0)|round|int }}%";
-            document.getElementById('bias-progress').style.width = "{{ (analysis.bias_score * 100)|default(0)|round|int }}%";
+            document.getElementById('neural-progress').style.width = "{{ (analysis.neural_prob|default(0) * 100)|round|int }}%";
+            document.getElementById('bias-progress').style.width = "{{ (analysis.bias_score|default(0) * 100)|round|int }}%";
             document.getElementById('source-progress').style.width = "{{ analysis.source_score|default(0)|round|int }}%";
         }, 100);
     </script>
