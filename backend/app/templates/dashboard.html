@@ -302,18 +302,32 @@
             <p class="text-slate-500">Review your past forensic reports and verification data.</p>
             <div class="mt-8 space-y-4">
                 {% for item in history %}
-                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
-                    <div>
-                        <h4 class="font-bold text-slate-800 truncate max-w-sm">{{ item.content_snippet }}</h4>
-                        <p class="text-xs text-slate-400 uppercase font-bold mt-1">{{ item.timestamp.strftime('%Y-%m-%d
-                            %H:%M') }}</p>
+                <a href="{{ url_for('main.analysis_detail', analysis_id=item._id|string) }}"
+                    class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-300 hover:bg-white transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-blue-500 transition-colors">
+                            <i class="fa-regular fa-file-lines"></i>
+                        </div>
+                        <div>
+                            <h4
+                                class="font-bold text-slate-800 truncate max-w-sm group-hover:text-blue-600 transition-colors">
+                                {{ item.content_snippet }}</h4>
+                            <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1">{% if
+                                item.timestamp.strftime %}{{ item.timestamp.strftime('%Y-%m-%d %H:%M') }}{% else %}{{
+                                item.timestamp }}{% endif %}</p>
+                        </div>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase 
-                        {% if item.classification == 'Fake News' %} bg-red-100 text-red-600 
-                        {% else %} bg-green-100 text-green-600 {% endif %}">
-                        {{ item.classification }}
-                    </span>
-                </div>
+                    <div class="flex items-center gap-4">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tight 
+                            {% if item.classification == 'Fake News' %} bg-red-50 text-red-600 
+                            {% else %} bg-emerald-50 text-emerald-600 {% endif %}">
+                            {{ item.classification }}
+                        </span>
+                        <i
+                            class="fa-solid fa-chevron-right text-slate-300 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </a>
                 {% endfor %}
             </div>
         </div>

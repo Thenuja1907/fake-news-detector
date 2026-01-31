@@ -338,16 +338,29 @@ def dashboard():
     return render_template('dashboard.html', history=history, stats=stats, user=current_user, is_admin=is_admin)
 
 @main.route('/analysis_detail')
+@main.route('/analysis_detail/<analysis_id>')
 @login_required
-def analysis_detail():
+def analysis_detail(analysis_id=None):
     user_email = current_user.email
-    # 1. Fetch latest record
-    latest_analysis = analysis_collection.find_one(
-        {"user_email": user_email},
-        sort=[("timestamp", -1)]
-    )
+    
+    # 1. Fetch target record
+    if analysis_id:
+        from database import use_fallback
+        if use_fallback:
+            latest_analysis = analysis_collection.find_one({"_id": analysis_id})
+        else:
+            try:
+                latest_analysis = analysis_collection.find_one({"_id": ObjectId(analysis_id)})
+            except:
+                latest_analysis = None
+    else:
+        latest_analysis = analysis_collection.find_one(
+            {"user_email": user_email},
+            sort=[("timestamp", -1)]
+        )
     
     if not latest_analysis:
+        flash("Analysis report not found.", "error")
         return redirect(url_for('main.dashboard'))
         
     # 2. Calculate User Stats for the detail header
