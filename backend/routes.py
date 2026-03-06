@@ -354,7 +354,7 @@ def analyze():
     source_rating, source_score = verify_source(url)
     result['source_rating'] = source_rating
 
-    # 3. Content Classification (RoBERTa + Kaggle Calibration)
+    # 3. Content Classification (Stable March 6th 8:23 PM Calibration)
     if model and tokenizer and content:
         try:
             inputs = tokenizer(content, return_tensors="pt", truncation=True, padding=True, max_length=512)
@@ -362,23 +362,31 @@ def analyze():
                 outputs = model(**inputs)
                 probs = F.softmax(outputs.logits, dim=1)
             
-            # Index 0 = Real, Index 1 = Fake (Original Model Alignment)
-            real_prob = probs[0][0].item()
+            # Index 0 = Real, Index 1 = Fake (Correct Alignment Fix)
+            real_prob = probs[0][0].item() 
             fake_prob = probs[0][1].item()
             
-            # Dynamic Probability Adjustment (The Kaggle Bias Fix)
-            if real_prob > 0.5 and has_excessive_caps and not has_agency_tag:
-                real_prob -= 0.25 # Penalty for linguistic noise
+            # Forensic Dataset Marker Detection
+            has_agency_marker = bool(re.search(r'[A-Z\s]{2,40}(\([A-Z\s]+\))?\s?-\s?', content[:120]))
             
-            if has_agency_tag:
-                real_prob = max(real_prob, 0.75) # Boost for formal agency signature
+            # Dynamic Calibration (Balanced approach)
+            if real_prob > 0.5:
+                # If no formal tag is present, apply a minor forensic caution
+                if not has_agency_marker: 
+                    real_prob -= 0.10 
+                # Penalty for excessive capitalization noise
+                if has_excessive_caps: 
+                    real_prob -= 0.15 
+            
+            # Boost for formal agency signature (Strongest 'Real' marker)
+            if has_agency_marker:
+                real_prob = max(real_prob, 0.85) 
 
             # 4. Credibility & Decision Fusion (70/30 Split)
-            # Fusing neural prediction with domain trust
             final_credibility = (real_prob * 70) + (source_score * 0.3)
             result['credibility_score'] = round(final_credibility, 1)
 
-            # BINARY CLASSIFICATION (No Misleading Label)
+            # BINARY CLASSIFICATION (Strict Logic)
             if result['credibility_score'] >= 50:
                 result['classification'] = "Real News"
             else:
@@ -386,10 +394,10 @@ def analyze():
             
             result['label'] = result['classification'] # Sync label for UI
 
-            # XAI Reasoning (State at 6:55 PM)
+            # XAI Reasoning (State at 8:23 PM)
             result['decision_summary'] = (
                 f"Neural analysis (Kaggle Benchmark) identified {result['classification']} markers. "
-                f"Linguistic profiling detected {'formal agency tags' if has_agency_tag else 'non-standard formatting'}. "
+                f"Linguistic profiling detected {'formal agency tags' if has_agency_marker else 'non-standard formatting'}. "
                 f"Trust matrix: {result['credibility_score']}% probability."
             )
             result['explanation'] = result['decision_summary']
