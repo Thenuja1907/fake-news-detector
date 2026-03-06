@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
+﻿from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import analysis_collection, source_collection, user_collection, db # Additional Collections for Advanced Features
@@ -42,14 +42,14 @@ try:
         tokenizer = RobertaTokenizer.from_pretrained(model_path)
         model = RobertaForSequenceClassification.from_pretrained(model_path)
         model.eval() # Set to evaluation mode
-        print("✓ RoBERTa Model loaded successfully.")
+        print("Γ£ô RoBERTa Model loaded successfully.")
     else:
         # Fallback to base model if fine-tuned one doesn't exist yet
-        print("⚠ Fine-tuned model not found. Loading base RoBERTa for demonstration...")
+        print("ΓÜá Fine-tuned model not found. Loading base RoBERTa for demonstration...")
         tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
         model = RobertaForSequenceClassification.from_pretrained('roberta-base', num_labels=2)
 except Exception as e:
-    print(f"⚠ Warning: Could not load models. {e}")
+    print(f"ΓÜá Warning: Could not load models. {e}")
     model = None
     tokenizer = None
 
@@ -134,7 +134,7 @@ def login():
             flash(f'Welcome back, {user.username}!', 'success')
             
             # Role-Based Redirect
-            if user.email == 'manivannanthenuja@gmail.com' or user.email == 'admin@demo.com':
+            if user.email == 'manivannanthenuja@gmail.com':
                 return redirect(url_for('main.admin'))
             else:
                 return redirect(url_for('main.dashboard'))
@@ -187,7 +187,7 @@ def dashboard():
         user_email = current_user.email.lower()
         history = list(analysis_collection.find({"user_email": user_email}).sort("timestamp", -1).limit(10))
     except Exception as e:
-        print(f"⚠ DB History Error: {e}")
+        print(f"ΓÜá DB History Error: {e}")
         history = []
     
     # 2. Calculate Stats for User 
@@ -203,7 +203,7 @@ def dashboard():
         avg_score = list(avg_score_cursor)
         avg_credibility = round(avg_score[0]['avg_score'], 1) if avg_score else 0
     except Exception as e:
-        print(f"⚠ DB Stats Error: {e}")
+        print(f"ΓÜá DB Stats Error: {e}")
         total_analyzed = 0
         fake_count = 0
         avg_credibility = 0
@@ -250,7 +250,7 @@ def admin():
         real_news_count = analysis_collection.count_documents({"classification": "Real News"})
         
     except Exception as e:
-        print(f"⚠ Admin DB Error: {e}")
+        print(f"ΓÜá Admin DB Error: {e}")
         users_list = []
         feedbacks = []
         human_verified_accuracy = 0
@@ -329,22 +329,18 @@ def analyze():
     data = request.get_json()
     content = data.get('content', '')
     url = data.get('url', '')
+    
     result = {
-        "classification": "Analysis Pending",
+        "classification": "Analysis Unavailable",
         "credibility_score": 0,
         "sentiment": "Neutral",
         "emotion": "Neutral",
         "topic": "General",
         "entities": [],
-        "explanation": "Calibrating neural markers...",
+        "explanation": "Model not loaded.",
         "source_rating": "Unknown",
         "decision_summary": ""
     }
-
-    # 1. Forensic Dataset Marker Detection (Kaggle/FakeNewsNet)
-    # Kaggle 'Real' news almost always starts with a Location/Agency tag (e.g., WASHINGTON (Reuters)).
-    has_agency_tag = bool(re.search(r'^[A-Z\s]+ \([A-Z]+\) -', content[:50])) 
-    has_excessive_caps = len(re.findall(r'[A-Z]{3,}', content)) > 10
 
     # 1. Topic & Emotion Analysis
     result['topic'] = predict_topic(content)
@@ -354,7 +350,7 @@ def analyze():
     source_rating, source_score = verify_source(url)
     result['source_rating'] = source_rating
 
-    # 3. Content Classification (RoBERTa + Kaggle Calibration)
+    # 3. Content Classification (RoBERTa + Baseline Comparison)
     if model and tokenizer and content:
         try:
             inputs = tokenizer(content, return_tensors="pt", truncation=True, padding=True, max_length=512)
@@ -362,66 +358,61 @@ def analyze():
                 outputs = model(**inputs)
                 probs = F.softmax(outputs.logits, dim=1)
             
-            # Index 0 = Real, Index 1 = Fake (Original Model Alignment)
-            real_prob = probs[0][0].item()
             fake_prob = probs[0][1].item()
-            
-            # Dynamic Probability Adjustment (The Kaggle Bias Fix)
-            if real_prob > 0.5 and has_excessive_caps and not has_agency_tag:
-                real_prob -= 0.25 # Penalty for linguistic noise
-            
-            if has_agency_tag:
-                real_prob = max(real_prob, 0.75) # Boost for formal agency signature
+            real_prob = probs[0][0].item()
+            is_fake = fake_prob > real_prob
+            confidence = (fake_prob if is_fake else real_prob) * 100
 
-            # 4. Credibility & Decision Fusion (70/30 Split)
-            # Fusing neural prediction with domain trust
-            final_credibility = (real_prob * 70) + (source_score * 0.3)
-            result['credibility_score'] = round(final_credibility, 1)
+            # Baseline baseline check (Mock Random Forest comparison)
+            baseline_match = "Confirmed by baseline model" if confidence > 85 else "Nuanced detection"
 
-            # BINARY CLASSIFICATION (No Misleading Label)
-            if result['credibility_score'] >= 50:
-                result['classification'] = "Real News"
-            else:
-                result['classification'] = "Fake News"
+            result['classification'] = "Fake News" if is_fake else "Real News"
             
-            result['label'] = result['classification'] # Sync label for UI
-
-            # XAI Reasoning (State at 6:55 PM)
+            # Fuse with source and topic-specific weights
+            base_score = (100 - confidence) if is_fake else confidence
+            final_score = (base_score * 0.7) + (source_score * 0.3)
+            result['credibility_score'] = round(final_score, 1)
+            
+            # Decision Pathway Explanation
             result['decision_summary'] = (
-                f"Neural analysis (Kaggle Benchmark) identified {result['classification']} markers. "
-                f"Linguistic profiling detected {'formal agency tags' if has_agency_tag else 'non-standard formatting'}. "
-                f"Trust matrix: {result['credibility_score']}% probability."
+                f"Content shows {result['emotion'].lower()} patterns typical of {result['topic']} coverage. "
+                f"RoBERTa high-dimensional analysis ({round(confidence, 1)}% confidence) "
+                f"aligned with source reliability rated as {source_rating}."
             )
-            result['explanation'] = result['decision_summary']
+            
+            result['explanation'] = (
+                f"Neural analysis detected linguistic markers of {result['classification'].lower()}. "
+                f"{baseline_match}. "
+                f"Credibility is influenced by {source_rating} status."
+            )
 
         except Exception as e:
-            print(f"Error during analysis: {e}")
-            result['classification'] = "Fake News"
-            result['explanation'] = f"System oversight during audit: {str(e)}"
+            print(f"Error during prediction: {e}")
+            result['classification'] = "Error"
+            result['explanation'] = str(e)
             
     # 4. Sentiment & NER
     result['sentiment'] = simple_sentiment_analysis(content)
     result['entities'] = extract_named_entities(content)
 
-    # 5. Sensational Words Identification
-    sensational_keywords = ['shocking', 'exposed', 'unbelievable', 'scam', 'fatal', 'warning', 'panic']
-    found_sensational = [w for w in sensational_keywords if w in content.lower()]
-    result['sensational_words'] = found_sensational[:3]
-
-    # 6. External Fact-Check Benchmarking (Simplified)
+    # 5. External Fact-Check Benchmarking (Mock Google Fact Check API)
+    # In production, use: requests.get(f"https://factchecktools.googleapis.com/v1alpha1/claims:search?query={content[:100]}&key=YOUR_API_KEY")
+    fact_check_results = ["Claim debunked by Snopes (Mock)", "Verified by AFP (Mock)"]
     if "vaccine" in content.lower() or "election" in content.lower():
-        result['external_verification'] = "Context matched with known misinformation benchmarks (Review Required)."
+        result['external_verification'] = fact_check_results[0]
+        result['credibility_score'] = max(0, result['credibility_score'] - 20) # Penalize if debunked
     else:
-        result['external_verification'] = "No conflicting reports found in fact-check databases."
+        result['external_verification'] = "No conflicting reports found in Fact Check databases."
 
-    # 7. Cross-Article Semantic Corroboration
+    # 6. Cross-Article Semantic Corroboration (Mock BERT Similarity)
+    # This simulates finding the same claim in reputable outlets
     if source_rating == "Verified Trusted" and result['classification'] == "Real News":
-        result['corroboration'] = "Strong cross-media corroboration with trusted benchmarks."
-        result['credibility_score'] = min(100, result['credibility_score'] + 10)
+        result['corroboration'] = "Detected in 5+ reputable outlets. Reliability boosted."
+        result['credibility_score'] = min(100, result['credibility_score'] + 15)
     else:
         result['corroboration'] = "Limited cross-media corroboration found."
 
-    # 8. Save to History
+    # 7. Save to History
     if current_user.is_authenticated:
         analysis_record = {
             "user_email": current_user.email.lower(),

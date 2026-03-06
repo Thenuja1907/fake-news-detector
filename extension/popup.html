@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body {
+            width: 320px;
+            padding: 15px;
+            background: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f1f5f9;
+            text-align: center;
+        }
+
+        .icon-container {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            margin: 0 auto 20px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        h2 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: #f0fdf4;
+            color: #16a34a;
+            border-radius: 40px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 9px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+        }
+
+        .btn {
+            display: block;
+            margin-top: 20px;
+            padding: 12px;
+            background: #6366f1;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 800;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="icon-container">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+        </div>
+        <h2>Antigravity Active</h2>
+        <p>Neural Layer Enabled</p>
+        <div class="status">
+            <span style="width: 6px; height: 6px; background: #16a34a; border-radius: 50%;"></span> SYSTEM ONLINE
+        </div>
+        <a href="http://127.0.0.1:5000/dashboard" target="_blank" class="btn">View Global Stats</a>
+        <div class="footer">Version 1.0 | Google Deepmind</div>
+    </div>
+</body>
+
+</html>

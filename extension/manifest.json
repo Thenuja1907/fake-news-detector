@@ -1,0 +1,35 @@
+{
+    "manifest_version": 3,
+    "name": "Antigravity | Fake News Detection Layer",
+    "version": "1.0",
+    "description": "Premium AI-powered verification layer for social media. Detects and highlights fake news in your feed.",
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "http://127.0.0.1:5000/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.facebook.com/*",
+                "*://*.twitter.com/*",
+                "*://*.x.com/*",
+                "*://*.reddit.com/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "styles.css"
+            ]
+        }
+    ],
+    "icons": {
+        "128": "icon128.png"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Antigravity Active"
+    }
+}
