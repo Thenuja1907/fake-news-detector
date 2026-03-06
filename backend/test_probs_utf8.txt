@@ -1,0 +1,4 @@
+﻿Text: The government reported today that the economy grew by 2.5%, according to the latest jobs report.
+RoBERTa Probs (Index 0, Index 1): [0.4992566  0.50074345]
+Text: SHOCKING SECRET: Vaccines contain microchips designed by aliens to track your thoughts! Share before it gets deleted!
+RoBERTa Probs (Index 0, Index 1): [0.50545985 0.49454013]

@@ -41,8 +41,11 @@
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-[450px] p-10 relative overflow-hidden">
 
         <div class="mb-8">
-            <h2 class="text-2xl font-bold text-slate-800">Sign In</h2>
-            <p class="text-slate-500 text-sm mt-1">Enter your credentials to access the platform</p>
+            <h2 class="text-2xl font-bold text-slate-800">{{ 'Reset Access' if forgot_mode else 'Sign In' }}</h2>
+            <p class="text-slate-500 text-sm mt-1">
+                {{ 'Enter your email to receive a recovery link' if forgot_mode else 'Enter your credentials to access
+                the platform' }}
+            </p>
         </div>
 
         <!-- Flash Messages -->
@@ -58,6 +61,7 @@
         {% endif %}
         {% endwith %}
 
+        {% if not forgot_mode %}
         <form action="/login" method="POST" class="space-y-5">
             <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Email</label>
@@ -70,7 +74,10 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Password</label>
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-xs font-bold text-slate-700 uppercase">Password</label>
+                    <a href="/forgot_password" class="text-[10px] font-bold text-indigo-600 hover:underline">Forgot?</a>
+                </div>
                 <div class="relative">
                     <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input type="password" name="password"
@@ -86,13 +93,42 @@
             </button>
         </form>
 
+        <p class="text-center text-xs text-slate-500 mt-6">
+            Don't have an account?
+            <a href="/register" class="text-indigo-600 font-bold hover:underline">Register here</a>
+        </p>
+        {% else %}
+        <form action="/forgot_password" method="POST" class="space-y-5">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Recovery Email</label>
+                <div class="relative">
+                    <i class="fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="email" name="email"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        placeholder="your@email.com" required>
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full btn-primary text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all active:scale-[0.98]">
+                Send Recovery Link
+            </button>
+
+            <a href="/login"
+                class="block text-center text-xs font-bold text-slate-500 hover:text-indigo-600 transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Back to Login
+            </a>
+        </form>
+        {% endif %}
+
+        {% if not forgot_mode %}
         <!-- Divider -->
         <div class="relative my-8">
             <div class="absolute inset-0 flex items-center">
                 <div class="w-full border-t border-slate-100"></div>
             </div>
             <div class="relative flex justify-center text-xs uppercase">
-                <span class="bg-white px-4 text-slate-400 font-bold tracking-wider">Or try demo accounts</span>
+                <span class="bg-white px-4 text-slate-400 font-bold tracking-wider">Quick Authorize</span>
             </div>
         </div>
 
@@ -107,6 +143,7 @@
                 <i class="fa-solid fa-shield-halved"></i> Admin Demo
             </button>
         </div>
+        {% endif %}
 
         <div class="mt-8 text-center">
             <p class="text-xs text-slate-400">
@@ -127,14 +164,14 @@
             const passInput = document.querySelector('input[name="password"]');
 
             if (role === 'user') {
-                emailInput.value = 'user@truth.guardian'; // existing demo user
-                passInput.value = 'password';
+                emailInput.value = 'user@demo.com'; // existing demo user
+                passInput.value = 'anypass';
                 // Creating a subtle flash effect
                 emailInput.parentElement.classList.add('ring-2', 'ring-indigo-500');
                 setTimeout(() => emailInput.parentElement.classList.remove('ring-2', 'ring-indigo-500'), 300);
             } else {
-                emailInput.value = 'manivannanthenuja@gmail.com'; // existing admin
-                passInput.value = 'password';
+                emailInput.value = 'admin@demo.com'; // existing admin
+                passInput.value = 'anypass';
                 emailInput.parentElement.classList.add('ring-2', 'ring-indigo-500');
                 setTimeout(() => emailInput.parentElement.classList.remove('ring-2', 'ring-indigo-500'), 300);
             }

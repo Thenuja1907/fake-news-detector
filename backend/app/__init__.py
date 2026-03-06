@@ -39,6 +39,14 @@ def create_app():
         from routes import User
         return User.get_by_id(user_id)
 
+    @app.after_request
+    def set_no_cache(response):
+        """Prevent browser from caching any page — forces re-authentication on every visit."""
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+
     # Register the routes from routes.py
     from routes import main
     app.register_blueprint(main)

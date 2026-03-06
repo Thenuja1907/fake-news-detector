@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Demo | Truth Guardian AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .active-view {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        iframe {
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body class="gradient-bg min-h-screen text-white">
+
+    <!-- Demo Toolbar -->
+    <nav class="h-20 glass sticky top-0 z-[100] px-8 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <div
+                class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-none">Truth Guardian</h1>
+                <p class="text-[10px] text-indigo-300 uppercase tracking-widest font-black mt-1">Unified System Demo</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 bg-black/40 p-1.5 rounded-2xl border border-white/5">
+            <button onclick="setView('user')" id="btn-user"
+                class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 active-view text-indigo-100">
+                <i class="fa-solid fa-user"></i> USER PORTAL
+            </button>
+            <button onclick="setView('admin')" id="btn-admin"
+                class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-screwdriver-wrench"></i> ADMIN CONTROL
+            </button>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <div class="hidden md:flex flex-col items-end">
+                <span class="text-[10px] font-black text-indigo-400 uppercase tracking-tighter">API Latency</span>
+                <span class="text-xs font-bold font-mono">24ms <i class="fa-solid fa-bolt text-emerald-400"></i></span>
+            </div>
+            <a href="/login"
+                class="px-5 py-2.5 bg-white text-slate-900 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition shadow-lg">Exit
+                Demo</a>
+        </div>
+    </nav>
+
+    <!-- Unified Screen -->
+    <main class="h-[calc(100vh-80px)] p-6 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500 rounded-full blur-[160px] animate-pulse">
+            </div>
+        </div>
+
+        <div class="max-w-[1400px] mx-auto h-full flex flex-col gap-6 relative z-10">
+            <!-- Breadcrumbs / Info -->
+            <div class="flex justify-between items-end px-4">
+                <div>
+                    <h2 id="view-title" class="text-3xl font-black text-white tracking-tighter">User Intelligence Deck
+                    </h2>
+                    <p id="view-desc" class="text-slate-400 font-medium">Full neural verification experience for
+                        end-users.</p>
+                </div>
+                <div class="flex gap-4">
+                    <span
+                        class="px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest">Environment:
+                        Staging</span>
+                    <span
+                        class="px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest">Model:
+                        RoBERTa-v2</span>
+                </div>
+            </div>
+
+            <!-- Viewport Container -->
+            <div class="flex-1 bg-black/60 rounded-[32px] border border-white/5 p-4 relative overflow-hidden">
+                <iframe id="viewport" src="/dashboard" class="w-full h-full border-0"></iframe>
+
+                <!-- Overlay Elements (Simulation) -->
+                <div class="absolute bottom-10 right-10 flex flex-col gap-3 pointer-events-none">
+                    <div
+                        class="glass p-4 rounded-2xl flex items-center gap-4 animate-in slide-in-from-bottom-10 fade-in duration-700">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span class="text-[10px] font-bold text-slate-300">Syncing with MongoDB Cluster...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function setView(view) {
+            const viewport = document.getElementById('viewport');
+            const title = document.getElementById('view-title');
+            const desc = document.getElementById('view-desc');
+            const userBtn = document.getElementById('btn-user');
+            const adminBtn = document.getElementById('btn-admin');
+
+            if (view === 'user') {
+                viewport.src = '/dashboard';
+                title.innerText = "User Intelligence Deck";
+                desc.innerText = "Full neural verification experience for end-users.";
+                userBtn.classList.add('active-view', 'text-indigo-100');
+                userBtn.classList.remove('text-slate-400');
+                adminBtn.classList.remove('active-view', 'text-indigo-100');
+                adminBtn.classList.add('text-slate-400');
+            } else {
+                viewport.src = '/admin';
+                title.innerText = "Administrative Command";
+                desc.innerText = "Core system monitoring and human-in-the-loop oversight.";
+                adminBtn.classList.add('active-view', 'text-indigo-100');
+                adminBtn.classList.remove('text-slate-400');
+                userBtn.classList.remove('active-view', 'text-indigo-100');
+                userBtn.classList.add('text-slate-400');
+            }
+        }
+    </script>
+</body>
+
+</html>

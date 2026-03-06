@@ -4,236 +4,818 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Fake News Detector</title>
+    <title>Truth Guardian | AI-Powered Verification</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
 
-        .gradient-btn {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        .gradient-brand {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
         }
 
-        .nav-item.active {
-            border-bottom: 2px solid #6366f1;
-            color: #1e293b;
+        .gradient-btn {
+            background: linear-gradient(90deg, #4f46e5, #9333ea);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tab-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .input-focus:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .heatmap-red {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-bottom: 2px solid #ef4444;
+        }
+
+        .heatmap-green {
+            background-color: rgba(16, 185, 129, 0.15);
+            border-bottom: 2px solid #10b981;
         }
     </style>
 </head>
 
-<body class="bg-indigo-50/30 min-h-screen text-slate-800">
+<body class="bg-[#f8fafc] min-h-screen text-slate-900 overflow-x-hidden">
 
-    <!-- Top Navigation -->
-    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3">
+    <!-- Premium Header -->
+    <header class="bg-white/70 backdrop-blur-md border-b border-slate-100 sticky top-0 z-[100] h-24">
+        <div class="max-w-[1440px] mx-auto h-full px-8 flex items-center justify-between">
+            <div class="flex items-center gap-4">
                 <div
-                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/20">
+                    class="w-12 h-12 rounded-2xl gradient-brand flex items-center justify-center text-white text-2xl shadow-xl shadow-indigo-500/20">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <div>
-                    <h1
-                        class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-purple-700">
-                        Fake News Detector</h1>
-                    <p class="text-xs text-slate-400 font-medium tracking-wide">AI-Powered Verification</p>
+                    <h1 class="text-2xl font-black text-indigo-900 tracking-tight leading-none">Fake News Detector</h1>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1.5">AI-Powered
+                        Verification</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-6">
+            <div class="flex items-center gap-8">
+                {% if user.email == 'manivannanthenuja@gmail.com' or user.email == 'admin@demo.com' %}
+                <a href="/admin"
+                    class="text-xs font-black text-slate-400 hover:text-indigo-600 transition uppercase tracking-widest">Admin
+                    Control</a>
+                {% endif %}
+                <a href="/demo"
+                    class="text-xs font-black text-slate-400 hover:text-indigo-600 transition uppercase tracking-widest border-r border-slate-200 pr-8 mr-1">System
+                    Demo</a>
+
                 <div
-                    class="flex items-center gap-3 bg-white border border-slate-200 rounded-full pl-1 pr-4 py-1 shadow-sm">
+                    class="flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-full pl-2 pr-5 py-2 group cursor-pointer hover:bg-white transition shadow-sm">
                     <div
-                        class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-sm font-bold">
-                        <i class="fa-regular fa-user"></i>
+                        class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+                        <i class="fa-solid fa-user-tie"></i>
                     </div>
-                    <span class="text-sm font-bold text-slate-600">{{ user.email }}</span>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase leading-none mb-0.5">Session Active
+                        </p>
+                        <p class="text-xs font-bold text-slate-700">{{ user.email }}</p>
+                    </div>
                 </div>
-                <!-- 
-                <a href="/logout" class="text-slate-400 hover:text-red-500 transition-colors">
-                    <i class="fa-solid fa-power-off"></i>
+
+                <a href="/logout"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition">
+                    <i class="fa-solid fa-power-off text-lg"></i>
                 </a>
-                 -->
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-8">
+    <main class="max-w-[1440px] mx-auto px-8 py-10">
 
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <!-- Total Analyses -->
-            <div
-                class="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 hover:shadow-lg transition-all duration-300">
-                <div
-                    class="w-12 h-12 rounded-xl bg-blue-500 text-white flex items-center justify-center text-xl mb-4 shadow-md shadow-blue-500/20">
-                    <i class="fa-regular fa-file-lines"></i>
-                </div>
-                <p class="text-sm font-bold text-slate-500 mb-1">Total Analyses</p>
-                <h3 class="text-4xl font-bold text-slate-800">{{ stats.total }}</h3>
-            </div>
+        <!-- Tab Navigation (Centered like in image) -->
+        <div
+            class="max-w-4xl mx-auto bg-white rounded-3xl p-2.5 shadow-xl shadow-slate-200/50 border border-slate-100 mb-12 flex gap-3">
+            <button onclick="switchTab('analyze')" id="tab-btn-analyze"
+                class="tab-btn active flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3">
+                <i class="fa-solid fa-bolt"></i> Analyze
+            </button>
+            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard"
+                class="tab-btn flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-400 hover:bg-slate-50 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+            </button>
+            <button onclick="switchTab('history')" id="tab-btn-history"
+                class="tab-btn flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-400 hover:bg-slate-50 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-clock-rotate-left"></i> History
+            </button>
+            <button onclick="switchTab('compare')" id="tab-btn-compare"
+                class="tab-btn flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-400 hover:bg-slate-50 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-code-compare"></i> Compare
+            </button>
+        </div>
 
-            <!-- Trustworthy -->
-            <div
-                class="bg-green-50/50 rounded-2xl p-6 border border-green-100 hover:shadow-lg transition-all duration-300">
+        <!-- TAB: Analyze -->
+        <div id="tab-analyze" class="tab-content active animate-in fade-in duration-700">
+            <div class="max-w-6xl mx-auto">
                 <div
-                    class="w-12 h-12 rounded-xl bg-green-500 text-white flex items-center justify-center text-xl mb-4 shadow-md shadow-green-500/20">
-                    <i class="fa-regular fa-circle-check"></i>
-                </div>
-                <p class="text-sm font-bold text-slate-500 mb-1">Trustworthy</p>
-                <h3 class="text-4xl font-bold text-slate-800">{{ stats.total - stats.fake_count }}</h3>
-            </div>
+                    class="bg-white rounded-[40px] shadow-2xl shadow-slate-200/40 border border-slate-100 overflow-hidden relative">
+                    <div class="p-12 pb-6">
+                        <h2 class="text-3xl font-black text-indigo-900 tracking-tight mb-2">Content Analysis</h2>
+                        <p class="text-slate-400 font-medium text-sm">Analyze text directly, paste URLs, or upload files
+                            (PDF, HTML, TXT)</p>
+                    </div>
 
-            <!-- Suspicious -->
-            <div
-                class="bg-orange-50/50 rounded-2xl p-6 border border-orange-100 hover:shadow-lg transition-all duration-300">
-                <div
-                    class="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center text-xl mb-4 shadow-md shadow-orange-500/20">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-                <p class="text-sm font-bold text-slate-500 mb-1">Suspicious (Fake)</p>
-                <h3 class="text-4xl font-bold text-slate-800">{{ stats.fake_count }}</h3>
-            </div>
+                    <div class="px-12 mb-8">
+                        <div class="inline-flex p-1.5 bg-slate-50 rounded-2xl border border-slate-100 gap-2">
+                            <button onclick="setMode('text')" id="mode-text"
+                                class="px-8 py-3 bg-white rounded-xl shadow-md text-[11px] font-black uppercase tracking-widest text-indigo-600 border border-indigo-50 flex items-center gap-2">
+                                <i class="fa-solid fa-font"></i> Text
+                            </button>
+                            <button onclick="setMode('url')" id="mode-url"
+                                class="px-8 py-3 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 flex items-center gap-2 transition">
+                                <i class="fa-solid fa-link"></i> URL
+                            </button>
+                            <button onclick="setMode('file')" id="mode-file"
+                                class="px-8 py-3 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 flex items-center gap-2 transition">
+                                <i class="fa-solid fa-file-arrow-up"></i> Upload File
+                            </button>
+                        </div>
+                    </div>
 
-            <!-- Accuracy Rate -->
-            <div
-                class="bg-purple-50/50 rounded-2xl p-6 border border-purple-100 hover:shadow-lg transition-all duration-300">
-                <div
-                    class="w-12 h-12 rounded-xl bg-purple-500 text-white flex items-center justify-center text-xl mb-4 shadow-md shadow-purple-500/20">
-                    <i class="fa-solid fa-chart-line"></i>
+                    <div class="px-12 mb-12">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Enter
+                            or Paste Text Content</label>
+                        <div id="input-container" class="relative">
+                            <textarea id="textContent"
+                                class="w-full bg-slate-50/50 border-2 border-slate-100 rounded-3xl p-8 h-[400px] outline-none input-focus transition-all text-sm leading-relaxed font-medium placeholder:text-slate-300"
+                                placeholder="Paste your article text here..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="px-12 pb-12 flex justify-end">
+                        <button onclick="runAnalysis()" id="analyze-btn"
+                            class="gradient-brand text-white px-12 py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl shadow-indigo-500/40 hover:-translate-y-1 transition active:scale-95 flex items-center gap-4">
+                            <i class="fa-solid fa-bolt"></i> Run Analysis
+                        </button>
+                    </div>
                 </div>
-                <p class="text-sm font-bold text-slate-500 mb-1">Accuracy Rate</p>
-                <h3 class="text-4xl font-bold text-slate-800">{{ stats.avg_credibility }}%</h3>
+
+                <div id="analysis-result-mount" class="mt-12"></div>
             </div>
         </div>
 
-        <!-- Navigation Bar -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-2 mb-8 flex items-center justify-between">
-            <div class="flex gap-2">
-                <button
-                    class="gradient-btn text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/30 flex items-center gap-2">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze
-                </button>
-                <button
-                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
-                    <i class="fa-solid fa-chart-column"></i> Dashboard
-                </button>
-                <button
-                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
-                    <i class="fa-solid fa-clock-rotate-left"></i> History
-                </button>
-                <button
-                    class="bg-transparent text-slate-500 font-bold text-sm px-6 py-3 rounded-xl hover:bg-slate-50 transition flex items-center gap-2">
-                    <i class="fa-solid fa-code-compare"></i> Compare
-                </button>
+        <!-- TAB: Dashboard -->
+        <div id="tab-dashboard" class="tab-content animate-in fade-in duration-700">
+            <!-- Stats Row -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div
+                    class="bg-white rounded-[32px] p-10 border border-slate-100 shadow-xl shadow-slate-200/30 flex items-center gap-8 group hover:border-indigo-200 transition">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-2xl group-hover:scale-110 transition duration-500">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Total Analyses
+                        </p>
+                        <h3 class="text-4xl font-black text-slate-800 tracking-tighter">{{ stats.total }}</h3>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-[32px] p-10 border border-slate-100 shadow-xl shadow-slate-200/30 flex items-center gap-8 group hover:border-emerald-200 transition">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl group-hover:scale-110 transition duration-500">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Trustworthy
+                        </p>
+                        <h3 class="text-4xl font-black text-slate-800 tracking-tighter">{{ stats.total -
+                            stats.fake_count }}</h3>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-[32px] p-10 border border-slate-100 shadow-xl shadow-slate-200/30 flex items-center gap-8 group hover:border-orange-200 transition">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-2xl group-hover:scale-110 transition duration-500">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Suspicious
+                            (Fake)</p>
+                        <h3 class="text-4xl font-black text-slate-800 tracking-tighter">{{ stats.fake_count }}</h3>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-[32px] p-10 border border-slate-100 shadow-xl shadow-slate-200/30 flex items-center gap-8 group hover:border-purple-200 transition">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center text-2xl group-hover:scale-110 transition duration-500">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Accuracy Rate
+                        </p>
+                        <h3 class="text-4xl font-black text-slate-800 tracking-tighter">{{ stats.accuracy }}%</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[40px] p-12 border border-slate-100 shadow-2xl shadow-slate-200/40">
+                <canvas id="mainDashboardChart" class="w-full h-[400px]"></canvas>
             </div>
         </div>
 
-        <!-- Content Analysis Section -->
-        <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-10 min-h-[500px]">
-            <h2 class="text-2xl font-bold text-blue-600 mb-2">Content Analysis</h2>
-            <p class="text-slate-400 mb-8 font-medium">Analyze text directly, paste URLs, or upload files (PDF, HTML,
-                TXT)</p>
-
-            <div class="flex gap-4 mb-8 bg-slate-50 p-2 rounded-2xl w-fit">
-                <button onclick="switchMode('text')" id="tab-text"
-                    class="bg-white text-slate-800 px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-all focus:ring-2 ring-blue-500">
-                    <i class="fa-solid fa-font mr-2"></i> Text
-                </button>
-                <button onclick="switchMode('url')" id="tab-url"
-                    class="text-slate-500 px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/50 transition-all">
-                    <i class="fa-solid fa-link mr-2"></i> URL
-                </button>
-                <button class="text-slate-400 px-8 py-3 rounded-xl font-bold text-sm cursor-not-allowed opacity-50">
-                    <i class="fa-regular fa-file mr-2"></i> File
-                </button>
+        <!-- TAB: History -->
+        <div id="tab-history" class="tab-content animate-in fade-in duration-700">
+            <div class="mb-10">
+                <h2 class="text-4xl font-black text-indigo-900 tracking-tighter mb-3">User History & Analysis Tracking
+                </h2>
+                <p class="text-slate-400 font-bold uppercase text-[11px] tracking-widest">Personalized repositories,
+                    feedback loops, and trend analysis.</p>
             </div>
 
-            <!-- Input Area -->
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-3 ml-1">Enter or paste text
-                content</label>
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+                <!-- History Sidebar -->
+                <div class="lg:col-span-1 space-y-8">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 group cursor-pointer">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center shadow-sm group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-slate-700 tracking-tight">1. User History and
+                                    Tracking</h4>
+                                <p class="text-[10px] font-medium text-slate-400">Manage your neural scan archives.</p>
+                            </div>
+                        </div>
 
-            <!-- Text Mode -->
-            <div id="input-text-mode">
-                <textarea id="textContent"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-6 h-64 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium text-slate-700 text-lg leading-relaxed placeholder:text-slate-300"
-                    placeholder="Paste your article text here..."></textarea>
+                        <div class="pl-14 space-y-6">
+                            <div class="flex gap-4">
+                                <div
+                                    class="w-6 h-6 rounded-md bg-blue-50 text-blue-500 flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid fa-lock"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-extrabold text-slate-700">Authenticated Access</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">The system allows
+                                        authenticated users to access a personalized repository.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div
+                                    class="w-6 h-6 rounded-md bg-blue-50 text-blue-500 flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid fa-spinner"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-extrabold text-slate-700">Progress Monitoring</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Users can track how the
+                                        credibility assessments evolve over time.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div
+                                    class="w-6 h-6 rounded-md bg-blue-50 text-blue-500 flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid fa-scale-balanced"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-extrabold text-slate-700">Evidence-Based Comparison</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Identify potential
+                                        contradictions or patterns in misinformation.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 group cursor-pointer pt-6">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center shadow-sm group-hover:bg-purple-500 group-hover:text-white transition-all duration-300">
+                                <i class="fa-solid fa-comments"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-slate-700 tracking-tight">2. Analytical & Feedback
+                                    History</h4>
+                                <p class="text-[10px] font-medium text-slate-400">Close the loop on AI performance.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Main Content -->
+                <div class="lg:col-span-3">
+                    <div
+                        class="bg-white rounded-[40px] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden">
+                        <div class="p-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+                            <div class="flex items-center gap-4 text-indigo-900">
+                                <i class="fa-solid fa-list-ul text-lg"></i>
+                                <h3 class="text-sm font-black uppercase tracking-widest">My Personal History Log</h3>
+                            </div>
+                            <button
+                                class="text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-800 transition">Export
+                                CSV</button>
+                        </div>
+
+                        <div class="p-12 min-h-[500px] flex flex-col items-center justify-center">
+                            {% if not history %}
+                            <div class="text-center animate-in zoom-in duration-700">
+                                <div
+                                    class="w-24 h-24 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-200 text-5xl mb-8 mx-auto">
+                                    <i class="fa-solid fa-folder-open"></i>
+                                </div>
+                                <h4 class="text-xl font-black text-slate-800 tracking-tight mb-2">No recent scans found.
+                                </h4>
+                                <p class="text-slate-400 font-medium text-sm">Run an analysis to start building your
+                                    personalized history repository.</p>
+                            </div>
+                            {% else %}
+                            <div class="w-full space-y-4">
+                                {% for item in history %}
+                                <div
+                                    class="flex items-center justify-between p-8 border border-slate-50 rounded-3xl hover:bg-slate-50/80 hover:border-indigo-100 transition group">
+                                    <div class="flex items-center gap-8">
+                                        <div
+                                            class="w-16 h-16 rounded-2xl {{ 'bg-red-50 text-red-500' if 'Fake' in item.classification else 'bg-emerald-50 text-emerald-500' }} flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition duration-500">
+                                            <i
+                                                class="fa-solid {{ 'fa-triangle-exclamation' if 'Fake' in item.classification else 'fa-circle-check' }}"></i>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                class="text-sm font-black text-slate-800 uppercase tracking-tighter mb-1">
+                                                {{ item.classification }}</h4>
+                                            <div class="flex items-center gap-3">
+                                                <span
+                                                    class="text-[9px] font-black px-2.5 py-1 {{ 'bg-red-100 text-red-600' if 'Fake' in item.classification else 'bg-emerald-100 text-emerald-600' }} rounded-full uppercase tracking-widest">{{
+                                                    item.topic }}</span>
+                                                <p
+                                                    class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                                                    {{ item.timestamp.strftime('%B %d, %Y') if item.timestamp else
+                                                    'Archived' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p
+                                            class="text-3xl font-black {{ 'text-red-500' if 'Fake' in item.classification else 'text-emerald-500' }} tracking-tighter">
+                                            {{ item.credibility_score }}%</p>
+                                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                                            Trust Identity</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Compare -->
+        <div id="tab-compare" class="tab-content animate-in fade-in duration-700">
+            <div class="mb-12">
+                <h2 class="text-4xl font-black text-indigo-900 tracking-tighter mb-3">Advanced Compare Features</h2>
+                <p class="text-slate-400 font-bold uppercase text-[11px] tracking-widest">System benchmarking, semantic
+                    comparisons, and performance metrics.</p>
             </div>
 
-            <!-- URL Mode -->
-            <div id="input-url-mode" class="hidden">
-                <input type="text" id="urlContent"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-6 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium text-slate-700 text-lg placeholder:text-slate-300"
-                    placeholder="https://example.com/article">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
+                <!-- Model Benchmarking -->
+                <div class="bg-white rounded-[40px] p-12 border border-slate-100 shadow-2xl shadow-slate-200/40">
+                    <div class="flex justify-between items-center mb-10 pb-6 border-b border-slate-50">
+                        <div class="flex items-center gap-4">
+                            <i class="fa-solid fa-microchip text-indigo-500 text-xl"></i>
+                            <h3 class="font-black text-slate-800 uppercase tracking-widest text-sm">Model Comparison:
+                                Last Scan</h3>
+                        </div>
+                        <span
+                            class="text-[10px] font-black bg-slate-50 text-slate-400 px-4 py-1.5 rounded-full uppercase tracking-tighter">No
+                            Scan Yet</span>
+                    </div>
+
+                    <div class="space-y-12">
+                        <div class="group">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm font-black text-slate-800">RoBERTa (Deep Learning)</span>
+                                <span
+                                    class="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg uppercase">Primary
+                                    Engine</span>
+                            </div>
+                            <div class="flex justify-between items-end mb-3">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Credibility
+                                    Attribution</p>
+                                <p class="text-3xl font-black text-slate-800 tracking-tighter">--%</p>
+                            </div>
+                            <div class="w-full bg-slate-50 h-2 rounded-full overflow-hidden shadow-inner">
+                                <div id="comp-bar-primary"
+                                    class="gradient-brand h-full w-0 transition-all duration-1000 ease-out"></div>
+                            </div>
+                        </div>
+
+                        <div class="group">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm font-black text-slate-800">TF-IDF + LogReg (Baseline)</span>
+                                <span
+                                    class="text-[10px] font-black text-slate-400 bg-slate-50 px-3 py-1 rounded-lg uppercase">Secondary</span>
+                            </div>
+                            <div class="flex justify-between items-end mb-3">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Statistical
+                                    Confidence</p>
+                                <p class="text-3xl font-black text-slate-800 tracking-tighter">--%</p>
+                            </div>
+                            <div class="w-full bg-slate-50 h-2 rounded-full overflow-hidden shadow-inner">
+                                <div id="comp-bar-secondary"
+                                    class="bg-slate-300 h-full w-0 transition-all duration-1000 ease-out"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HITL Alignment -->
+                <div class="bg-white rounded-[40px] p-12 border border-slate-100 shadow-2xl shadow-slate-200/40">
+                    <div class="flex items-center gap-4 mb-3">
+                        <i class="fa-solid fa-users-viewfinder text-purple-500 text-xl"></i>
+                        <h3 class="font-black text-slate-800 uppercase tracking-widest text-sm">Human-in-the-Loop
+                            Alignment</h3>
+                    </div>
+                    <p class="text-[11px] font-medium text-slate-400 mb-10 leading-relaxed">Comparing automated AI
+                        predictions against explicit user feedback for continuous retraining.</p>
+
+                    <div class="grid grid-cols-2 gap-8 mb-12">
+                        <div
+                            class="p-10 bg-emerald-50/50 border border-emerald-100 rounded-[32px] text-center group hover:bg-emerald-50 transition">
+                            <i
+                                class="fa-solid fa-thumbs-up text-emerald-500 text-3xl mb-5 group-hover:scale-110 transition duration-300"></i>
+                            <h4 class="text-4xl font-black text-emerald-600 mb-1 tracking-tighter">1,452</h4>
+                            <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Correct
+                                Predictions</p>
+                        </div>
+                        <div
+                            class="p-10 bg-red-50/50 border border-red-100 rounded-[32px] text-center group hover:bg-red-50 transition">
+                            <i
+                                class="fa-solid fa-thumbs-down text-red-500 text-3xl mb-5 group-hover:scale-110 transition duration-300"></i>
+                            <h4 class="text-4xl font-black text-red-600 mb-1 tracking-tighter">38</h4>
+                            <p class="text-[10px] font-black text-red-500 uppercase tracking-widest">Incorrect (Flagged)
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-8 bg-slate-50 rounded-3xl border border-white">
+                        <div>
+                            <h4 class="text-sm font-black text-slate-800 mb-1">Model Retraining Status</h4>
+                            <p class="text-[11px] font-medium text-slate-400">Epoch 4 scheduled @ 100 flags.</p>
+                        </div>
+                        <div class="relative w-16 h-16 transform transition hover:scale-110">
+                            <svg class="w-full h-full -rotate-90">
+                                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="6" fill="transparent"
+                                    class="text-slate-200" />
+                                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="6" fill="transparent"
+                                    class="text-purple-600" stroke-dasharray="175.9" stroke-dashoffset="109.1" />
+                            </svg>
+                            <span
+                                class="absolute inset-0 flex items-center justify-center text-[11px] font-black text-slate-800">38%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex justify-end mt-6">
-                <button onclick="runAnalysis()"
-                    class="gradient-btn text-white px-10 py-4 rounded-xl font-bold text-base shadow-xl shadow-blue-600/20 hover:shadow-blue-600/40 hover:-translate-y-1 transition-all active:scale-95 flex items-center gap-3">
-                    <i class="fa-solid fa-bolt"></i> Run Analysis
-                </button>
+            <!-- Source Benchmarking Table -->
+            <div
+                class="bg-white rounded-[40px] p-12 border border-slate-100 shadow-2xl shadow-slate-200/40 mb-10 overflow-hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-12">
+                    <div class="flex items-center gap-5">
+                        <i class="fa-solid fa-database text-emerald-500 text-2xl"></i>
+                        <div>
+                            <h3 class="font-black text-slate-800 uppercase tracking-widest text-sm">Source & Fact-Check
+                                Benchmarking</h3>
+                            <p class="text-[11px] font-medium text-slate-400 mt-1 leading-relaxed">Cross-referencing
+                                domain fingerprints against the curated reliability database.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button
+                            class="px-6 py-3 bg-emerald-50 text-emerald-600 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all flex items-center gap-3">
+                            <i class="fa-solid fa-bolt"></i> Google Fact-Check API
+                        </button>
+                        <button
+                            class="px-6 py-3 bg-indigo-50 text-indigo-600 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-indigo-100 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-3">
+                            <i class="fa-solid fa-layer-group"></i> Curated DB (200+)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr
+                                class="text-[11px] font-black text-slate-400 uppercase tracking-widest text-left border-b border-slate-50">
+                                <th class="pb-6 px-4">Source Name</th>
+                                <th class="pb-6 px-4">Domain URL</th>
+                                <th class="pb-6 px-4 text-right">Benchmarked Credibility</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            {% set fact_sources = [
+                            ('BBC News', 'bbc.com', 'Verified Trusted', 'emerald'),
+                            ('Reuters', 'reuters.com', 'Verified Trusted', 'emerald'),
+                            ('Associated Press', 'apnews.com', 'Verified Trusted', 'emerald'),
+                            ('The New York Times', 'nytimes.com', 'Verified Trusted', 'emerald'),
+                            ('HealthLine Verified', 'healthline.com', 'Highly Reliable', 'red'),
+                            ('Fake News Network', 'fake-news-website.com', 'Unreliable', 'red')
+                            ] %}
+                            {% for name, url, tag, color in fact_sources %}
+                            <tr class="group hover:bg-slate-50/50 transition duration-300">
+                                <td class="py-7 px-4">
+                                    <span class="text-sm font-black text-slate-800 tracking-tight">{{ name }}</span>
+                                </td>
+                                <td class="py-7 px-4">
+                                    <span class="text-sm font-semibold text-blue-500 hover:underline cursor-pointer">{{
+                                        url }}</span>
+                                </td>
+                                <td class="py-7 px-4 text-right">
+                                    <span
+                                        class="px-5 py-2 {{ 'bg-emerald-50 text-emerald-600' if color == 'emerald' else 'bg-red-50 text-red-500' }} rounded-xl text-[10px] font-black uppercase tracking-widest border {{ 'border-emerald-100' if color == 'emerald' else 'border-red-100' }}">
+                                        {{ tag }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <p class="text-center text-xs text-slate-300 mt-10">Protected by Truth Guardian AI Engine v2.4</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- Semantic Corroboration -->
+                <div class="bg-white rounded-[40px] p-12 border border-slate-100 shadow-2xl shadow-slate-200/40">
+                    <div class="flex items-center gap-4 mb-3">
+                        <i class="fa-solid fa-network-wired text-red-500 text-xl"></i>
+                        <h3 class="font-black text-slate-800 uppercase tracking-widest text-sm">Semantic Corroboration
+                        </h3>
+                    </div>
+                    <p class="text-[11px] font-medium text-slate-400 mb-10 leading-relaxed uppercase tracking-widest">
+                        Discover corroborating reports across multiple outlets.</p>
+
+                    <div class="space-y-4">
+                        <div
+                            class="p-8 bg-slate-50 border border-slate-100 rounded-3xl flex items-center justify-between group hover:bg-white transition duration-500">
+                            <span class="text-sm font-black text-slate-700">"Election Audit..."</span>
+                            <div class="flex items-center gap-12">
+                                <span class="text-sm font-black text-emerald-500">92% Match</span>
+                                <span class="text-[11px] font-bold text-slate-300 uppercase">Reuters.com</span>
+                            </div>
+                        </div>
+                        <div
+                            class="p-8 bg-slate-50 border border-slate-100 rounded-3xl flex items-center justify-between group hover:bg-white transition duration-500">
+                            <span class="text-sm font-black text-slate-700">"Voter Turnout..."</span>
+                            <div class="flex items-center gap-12">
+                                <span class="text-sm font-black text-emerald-500">88% Match</span>
+                                <span class="text-[11px] font-bold text-slate-300 uppercase">BBC.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trend Analysis -->
+                <div class="bg-white rounded-[40px] p-12 border border-slate-100 shadow-2xl shadow-slate-200/40">
+                    <div class="flex items-center gap-4 mb-3">
+                        <i class="fa-solid fa-chart-column text-amber-500 text-xl"></i>
+                        <h3 class="font-black text-slate-800 uppercase tracking-widest text-sm">Trend & Evolution
+                            Analysis</h3>
+                    </div>
+                    <p class="text-[11px] font-medium text-slate-400 mb-10 leading-relaxed">Tracking misinformation
+                        drift over 30 days.</p>
+
+                    <div class="h-44 flex items-end justify-between px-6 gap-3">
+                        <div
+                            class="flex-1 bg-red-200 rounded-2xl h-[35%] transition-all hover:h-[45%] hover:bg-red-400 duration-500">
+                        </div>
+                        <div
+                            class="flex-1 bg-amber-200 rounded-2xl h-[55%] transition-all hover:h-[65%] hover:bg-amber-400 duration-500">
+                        </div>
+                        <div
+                            class="flex-1 bg-emerald-200 rounded-2xl h-[85%] transition-all hover:h-[95%] hover:bg-emerald-400 duration-500">
+                        </div>
+                        <div
+                            class="flex-1 bg-emerald-300 rounded-2xl h-[88%] transition-all hover:h-[98%] hover:bg-emerald-500 duration-500 shadow-xl shadow-emerald-500/20">
+                        </div>
+                        <div
+                            class="flex-1 bg-red-200 rounded-2xl h-[30%] transition-all hover:h-[40%] hover:bg-red-400 duration-500">
+                        </div>
+                        <div
+                            class="flex-1 bg-emerald-400 rounded-2xl h-[95%] transition-all hover:h-[100%] hover:bg-emerald-600 duration-500">
+                        </div>
+                    </div>
+                    <p class="text-[10px] font-black text-slate-300 uppercase text-center mt-6 tracking-widest">
+                        Credibility Index (30 Days)</p>
+                </div>
+            </div>
         </div>
 
     </main>
 
-    <!-- Floating Help Button -->
-    <div
-        class="fixed bottom-8 right-8 w-12 h-12 bg-slate-800 text-white rounded-full flex items-center justify-center shadow-2xl cursor-pointer hover:scale-110 transition-transform">
+    <footer class="mt-20 py-12 text-center border-t border-slate-100 bg-white/50">
+        <p class="text-[11px] font-black text-slate-300 uppercase tracking-[0.2em]">Protected by Truth Guardian AI
+            Engine v2.4</p>
+    </footer>
+
+    <!-- Help Modal Overlay (Button in prompt image) -->
+    <button
+        class="fixed bottom-8 right-8 w-14 h-14 rounded-2xl bg-indigo-900 text-white shadow-2xl shadow-indigo-500/50 flex items-center justify-center text-xl hover:scale-110 transition active:scale-95 z-[50]">
         <i class="fa-solid fa-question"></i>
-    </div>
+    </button>
 
     <script>
-        function switchMode(mode) {
-            const textTab = document.getElementById('tab-text');
-            const urlTab = document.getElementById('tab-url');
-            const textMode = document.getElementById('input-text-mode');
-            const urlMode = document.getElementById('input-url-mode');
+        let mainChart = null;
 
-            if (mode === 'text') {
-                textTab.className = "bg-white text-slate-800 px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-all focus:ring-2 ring-blue-500";
-                urlTab.className = "text-slate-500 px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/50 transition-all";
-                textMode.classList.remove('hidden');
-                urlMode.classList.add('hidden');
-            } else {
-                urlTab.className = "bg-white text-slate-800 px-8 py-3 rounded-xl font-bold text-sm shadow-sm transition-all focus:ring-2 ring-blue-500";
-                textTab.className = "text-slate-500 px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/50 transition-all";
-                urlMode.classList.remove('hidden');
-                textMode.classList.add('hidden');
-            }
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-slate-400');
+            });
+
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('tab-btn-' + tabId).classList.add('active');
+            document.getElementById('tab-btn-' + tabId).classList.remove('text-slate-400');
+
+            if (tabId === 'dashboard') initDashboard();
+        }
+
+        function setMode(mode) {
+            const btns = ['text', 'url', 'file'];
+            btns.forEach(m => {
+                const b = document.getElementById('mode-' + m);
+                b.className = "px-8 py-3 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 flex items-center gap-2 transition";
+            });
+
+            const active = document.getElementById('mode-' + mode);
+            active.className = "px-8 py-3 bg-white rounded-xl shadow-md text-[11px] font-black uppercase tracking-widest text-indigo-600 border border-indigo-50 flex items-center gap-2";
+
+            const area = document.getElementById('textContent');
+            if (mode === 'url') area.placeholder = "https://news-outlet.com/article-url-here...";
+            else if (mode === 'file') area.placeholder = "Click the upload icon or drag files here (PDF/HTML/TXT)...";
+            else area.placeholder = "Paste your article text here...";
         }
 
         async function runAnalysis() {
-            const btn = document.querySelector('button[onclick="runAnalysis()"]');
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-            btn.disabled = true;
+            const btn = document.getElementById('analyze-btn');
+            const mount = document.getElementById('analysis-result-mount');
+            const content = document.getElementById('textContent').value;
 
-            const text = document.getElementById('textContent').value;
-            const url = document.getElementById('urlContent').value;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Initializing Neural Scan...';
+            btn.disabled = true;
 
             try {
                 const res = await fetch('/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: text, url: url })
+                    body: JSON.stringify({ content: content })
                 });
                 const data = await res.json();
 
-                // For this demo, simple alert, in real app we update UI using the nice cards from image
-                alert(`Analysis Complete!\nVerdict: ${data.classification}\nScore: ${data.credibility_score}%\n\n${data.explanation}`);
+                const isFake = data.classification.toLowerCase().includes('fake');
+                const theme = isFake ? 'red' : 'emerald';
 
-                // TODO: Show nice result Modal/Card instead of Alert
-            } catch (err) {
-                alert("Error connecting to server.");
-            } finally {
-                btn.innerHTML = originalContent;
+                mount.innerHTML = `
+                    <div class="bg-white rounded-[40px] shadow-2xl border border-slate-100 overflow-hidden animate-in slide-in-from-bottom-10 duration-700">
+                        <div class="p-12 pb-10 border-b border-slate-50 flex flex-col md:flex-row justify-between items-start gap-10">
+                            <div class="flex items-center gap-10">
+                                <div class="w-24 h-24 rounded-[32px] bg-${theme}-500 text-white flex items-center justify-center text-5xl shadow-2xl shadow-${theme}-500/30">
+                                    <i class="fa-solid ${isFake ? 'fa-biohazard' : 'fa-certificate'}"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-4xl font-black text-slate-800 uppercase tracking-tighter mb-2">${data.classification}</h3>
+                                    <div class="flex items-center gap-4">
+                                        <span class="px-5 py-2 bg-${theme}-50 text-${theme}-600 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-${theme}-100">
+                                            ${data.credibility_score > 60 ? 'Cognitive Trust' : 'Verification Required'}
+                                        </span>
+                                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Trust Matrix: ${data.credibility_score}%</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Emotion</p>
+                                    <p class="text-xs font-bold text-slate-700 uppercase">${data.emotion}</p>
+                                </div>
+                                <div class="px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Domain</p>
+                                    <p class="text-xs font-bold text-slate-700 uppercase">${data.topic}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+                            <div class="space-y-10">
+                                <div>
+                                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Explainable AI (Word Contribution)</h4>
+                                    <div class="p-8 bg-slate-50/50 rounded-3xl border border-slate-100 text-sm leading-relaxed text-slate-600 font-medium italic">
+                                        ${mockHeatmap(content)}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Named Entity Recognition</h4>
+                                    <div class="flex flex-wrap gap-3">
+                                        ${data.entities.map(e => `<span class="px-5 py-2.5 bg-white border border-slate-100 rounded-xl text-[11px] font-bold text-slate-600 shadow-sm transition hover:border-indigo-200">${e}</span>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-10">
+                                <div class="p-10 bg-slate-900 rounded-[40px] text-white shadow-2xl">
+                                    <h4 class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-6">Model Decision Summary</h4>
+                                    <p class="text-sm leading-relaxed text-slate-300 font-medium">${data.decision_summary}</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div class="p-6 bg-slate-50/50 border border-slate-100 rounded-3xl">
+                                        <p class="text-[10px] font-black text-slate-400 uppercase mb-2">Fact-Check Benchmarking</p>
+                                        <p class="text-xs font-bold text-slate-700 leading-snug">${data.external_verification}</p>
+                                    </div>
+                                    <div class="p-6 bg-slate-50/50 border border-slate-100 rounded-3xl">
+                                        <p class="text-[10px] font-black text-slate-400 uppercase mb-2">Social Spread</p>
+                                        <p class="text-xs font-bold text-slate-700 leading-snug">${data.corroboration}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Update Compare bars
+                document.getElementById('comp-bar-primary').style.width = data.credibility_score + '%';
+                document.getElementById('comp-bar-secondary').style.width = Math.max(0, data.credibility_score - 10) + '%';
+
+            } catch (e) { console.error(e); }
+            finally {
+                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Run Analysis';
                 btn.disabled = false;
             }
+        }
+
+        function mockHeatmap(text) {
+            const words = text.split(' ').slice(0, 50);
+            return words.map(w => {
+                const clean = w.toLowerCase();
+                if (['shocking', 'exposed', 'scam', 'fatal', 'warning', 'panic'].includes(clean)) return `<span class="heatmap-red">${w}</span>`;
+                if (['verified', 'official', 'confirmed', 'studies'].includes(clean)) return `<span class="heatmap-green">${w}</span>`;
+                return w;
+            }).join(' ') + "...";
+        }
+
+        function initDashboard() {
+            if (mainChart) mainChart.destroy();
+            const ctx = document.getElementById('mainDashboardChart').getContext('2d');
+            mainChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Real News',
+                        data: [45, 52, 38, 65, 48, 20, 30],
+                        backgroundColor: '#6366f1',
+                        borderRadius: 12
+                    }, {
+                        label: 'Fake News',
+                        data: [12, 18, 5, 22, 10, 4, 8],
+                        backgroundColor: '#ef4444',
+                        borderRadius: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { font: { weight: 'black', size: 11 } } } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [5, 5] } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
         }
     </script>
 </body>

@@ -7,7 +7,15 @@ MONGO_URI = "mongodb+srv://manivannanthenuja_db_user:Thenuja123M@cluster0.jlu2yi
 
 # Bypass SSL verification for development environment issues (Handshake Failure Fix)
 # In production, use certifi.where() or proper CA bundle
-client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
+# Robust SSL/TLS configuration for Atlas
+client = MongoClient(
+    MONGO_URI, 
+    tls=True, 
+    tlsCAFile=certifi.where(),
+    tlsAllowInvalidCertificates=True, # Secondary fallback for dev environments
+    connectTimeoutMS=30000,
+    socketTimeoutMS=30000
+)
 db = client["fake_news_db"]
 
 # 1. Collection for storing analyzed news (History)
