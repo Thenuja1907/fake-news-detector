@@ -1,0 +1,20 @@
+﻿Text: WASHINGTON (Reuters) - The U.S. House of Representatives vot...
+Classification: Real News | Score: 94.0 | Expected: Real News
+Reasoning: Content carries a verified agency dateline (Reuters/AP). No sensationalism or manipulative tone detected. Credibility: 94.0%.
+--------------------------------------------------
+Text: BREAKING: They don't want you to know this but the deep stat...
+Classification: Fake News | Score: 28.4 | Expected: Fake News
+Reasoning: Flagged for: sensationalism. Lacks formal dateline and objective reporting tone found in legitimate news. Credibility: 28.4%.
+--------------------------------------------------
+Text: LONDON (Reuters) - Britain's government confirmed on Monday ...
+Classification: Real News | Score: 94.0 | Expected: Real News
+Reasoning: Content carries a verified agency dateline (Reuters/AP). No sensationalism or manipulative tone detected. Credibility: 94.0%.
+--------------------------------------------------
+Text: SHOCKING: The mainstream media won't tell you about the mira...
+Classification: Fake News | Score: 33.3 | Expected: Fake News
+Reasoning: Flagged for: sensationalism. Lacks formal dateline and objective reporting tone found in legitimate news. Credibility: 33.3%.
+--------------------------------------------------
+Text: 21st Century Wire - The globalist agenda exposed. What they ...
+Classification: Fake News | Score: 27.0 | Expected: Fake News
+Reasoning: Flagged for: sensationalism. Lacks formal dateline and objective reporting tone found in legitimate news. Credibility: 27.0%.
+--------------------------------------------------
